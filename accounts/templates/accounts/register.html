@@ -1,0 +1,13 @@
+{% extends 'accountpiggy/base.html' %}
+{% block content %}
+<form method="post" action="{% url 'accounts:register' %}?next={{next}}">
+    {% csrf_token %}
+    <div class="form-group">
+        {% for field in form %}
+            <label for="{{field.id_for_label}}">{{field.label}}</label>
+            {{field}}
+        {% endfor %}
+    </div>
+    <a class="btn btn-dark" href="{% url 'accounts:login' %}?next={{next}}">로그인</a><button type="submit" class="btn btn-dark" name="create_user">회원가입</button>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'accountpiggy/base.html' %}
+{% load static %}
+{% block link %}
+<link rel="stylesheet" href="{% static 'accountpiggy/nav_room.css' %}?after" type="text/css">
+{% endblock %}
+{% block bottom %}
+<nav class="nav-room">
+    <a class="nav-room-link" href="{% url 'accountpiggy:room_info_page' room.id %}">
+        <i class="material-icons nav-room-icon">groups</i>
+        <span class="nav-room-text">그룹</span>
+    </a>
+    <a class="nav-room-link" href="{% url 'accountpiggy:room_expenses_page' room.id %}">
+        <i class="material-icons nav-room-icon">reorder</i>
+        <span class="nav-room-text">내역</span>
+    </a>
+    <a class="nav-room-link" href="{% url 'accountpiggy:room_expense_cleanup_page' room.id %}">
+        <i class="material-icons nav-room-icon">print</i>
+        <span class="nav-room-text">정산</span>
+    </a>
+</nav>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% load static %}
+<nav class="navbar navbar-expand-xs navbar-dark bg-dark">
+    <a href="/" class="navbar-brand">{{user.name}}돼지</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+<div class="collapse" id="navbarMenu">
+    <div class="bg-dark p-2">
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a href="{% url 'accounts:logout' %}" class="nav-link text-white">로그아웃</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">친구관리</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">설정</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="{% url 'accounts:login' %}" class="nav-link text-white">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'accounts:register' %}" class="nav-link text-white">회원가입</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

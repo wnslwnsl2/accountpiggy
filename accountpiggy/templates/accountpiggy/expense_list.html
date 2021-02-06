@@ -1,0 +1,51 @@
+{% load tz %}
+{% localtime on %}
+{% for expense_in_day in expense_in_day_list %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col expense-day">
+            {{expense_in_day.date}}
+        </div>
+    </div>
+</div>
+{% for expense in expense_in_day.expense_list %}
+<div class="container-fluid expense_list">
+    <div class="row expense">
+        <div class="col-7 expenseTime">
+            {{expense.datetime|localtime|date:'H:i'}}
+        </div>
+        <div class="col-5 expenseCost">
+            {{ expense.cost }}원 / {{expense.number_of_participants}}명
+        </div>
+        <div class="col-7 text-nowrap text-truncate expensePurpose">
+            {{ expense.purpose }}
+        </div>
+        <div class="col-5 expenseDividedCost">
+            {{ expense.divided_cost }}원
+        </div>
+    </div>
+
+    <div class="row d-none d-flex collapsed-expense-info">
+        <div class="col-10 expenseUsers">
+            <spane class="text-light bg-dark">{{expense.expend_user.nickname}}</spane>
+            {% for user in expense.users.all %}
+                {% if user.index != expense.expend_user.index %}
+                    {{user.nickname}}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
+        <div class="col-1 expenseIcon align-content-center">
+            <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}"><i class="material-icons">create</i></a>
+        </div>
+        <div class="col-1 expenseIcon align-content-center">
+            <a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}"><i class="material-icons">delete</i></a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+
+{% endfor %}
+{% endlocaltime %}

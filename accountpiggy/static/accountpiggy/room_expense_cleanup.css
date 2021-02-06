@@ -1,0 +1,41 @@
+.transferItem {
+    margin: 0 auto;
+    border-bottom: 2px solid gray !important;
+}
+
+.button_recv.state0{
+    background-color: transparent !important;
+}
+.button_recv.state1{
+    background-color: green !important;
+}
+.button_recv.state2{
+    background-color: green !important;
+}
+.button_recv.state3{
+    background-color: gray !important;
+    disabled:true !important;
+}
+
+.button_send.state0{
+    background-color: transparent !important;
+}
+.button_send.state1{
+    background-color: gray !important;
+}
+.button_send.state2{
+    background-color: red !important;
+}
+.button_send.state3{
+    background-color: gray !important;
+}
+.sectionTitle1{
+    background-color: #0c5460;
+    color:white;
+    font-size:20px;
+}
+.sectionTitle2{
+    background-color: #6c757d;
+    color:white;
+    font-size:18px;
+}

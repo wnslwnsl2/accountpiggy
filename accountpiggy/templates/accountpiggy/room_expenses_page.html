@@ -1,0 +1,19 @@
+{% extends 'accountpiggy/base_room_page.html' %}
+{% load static %}
+{% block title %}지출내역{% endblock %}
+{% block link %}
+{{ block.super }}
+    <link rel="stylesheet" href="{% static 'accountpiggy/expense_list.css' %}?after" type="text/css"/>
+    <script src="{% static 'accountpiggy/expense_list.js' %}"></script>
+{% endblock %}
+{% block header %}지출내역{% endblock %}
+{% block content %}
+    <a class="btn btn-outline-dark" id="expenseAdd" href="{% url 'accountpiggy:room_expense_save_page' room.id %}">
+        <span>추가하기</span><i class="material-icons">add</i>
+    </a>
+{% if expense_exist %}
+    {% include 'accountpiggy/expense_list.html' %}
+{% else %}
+    엄서용
+{% endif %}
+{% endblock %}

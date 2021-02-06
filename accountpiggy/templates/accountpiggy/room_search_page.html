@@ -1,0 +1,10 @@
+{% extends 'accountpiggy/base.html' %}
+{% block title %}방 찾기{% endblock %}
+{% block content %}
+<h3>방 찾기</h3>
+<form method="get" action=".">
+    <label for="name">이름:</label><input type="text" id="name" name="name"/>
+    <input type="submit" value="검색"/>
+</form>
+{% include 'accountpiggy/room_list.html' %}
+{% endblock %}

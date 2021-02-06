@@ -1,0 +1,35 @@
+{% extends 'accountpiggy/base.html' %}
+{% load static %}
+
+{% block title %}정산 돼지{% endblock %}
+
+{% block header %}
+{% if user.is_authenticated %}
+안녕하세요 {{user.name}}님
+{% else %}
+<a href="{% url 'accounts:login' %}">로그인</a>을 해주세요
+{% endif %}
+{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="accountpiggy/main.css"/>
+<style>
+    .room-button{
+        width:100%;
+        margin: 10px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<a class="btn btn-outline-dark room-button" href="{% url 'accountpiggy:room_create_page' %}" role="button">
+    만들기+
+</a>
+
+<h4>방리스트</h4>
+
+{% include 'accountpiggy/room_list.html' %}
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'accountpiggy/base_room_page.html' %}
+{% block title %}지출입력{% endblock %}
+{% block content %}
+<h3>지출입력</h3>
+<form method="post" action="{% url 'accountpiggy:room_expense_save_page' room.id %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <h5>지출자</h5>
+        {% if is_admin %}
+        {{form.expend_user}}
+<!--        {% for radio in form.expend_user %}-->
+<!--        <div class="form-check">-->
+<!--            {{ radio.tag }}-->
+<!--            <label class="form-check-label" for="{{radio.id_for_label}}">{{ radio.choice_label }}</label>-->
+<!--        </div>-->
+<!--        {% endfor %}-->
+        {% endif %}
+
+        <h5>지출참가자</h5>
+        <div class="form-check">
+            {% for user in form.users %}
+            <div class="input-group-prepend">
+                {{user.tag}}
+                <label class="form-check-label" for="{{user.id_for_label}}">{{ user.choice_label }}</label>
+            </div>
+            {% endfor %}
+        </div>
+
+        <label for="form.purpose.id_for_label">{{form.purpose.label}}</label>
+        {{form.purpose}}
+        <label for="form.purpose.id_for_cost">{{form.cost.label}}</label>
+        {{form.cost}}
+        </br>분류:{{form.purpose_category}}
+        </br>쓴시간</br>{{form.date}}{{form.hour}}{{form.minute}}
+        </br></br>
+        <input type="submit" name="save" value="저장"/><input type="submit" name="save_another" value="추가 이체하기"/>
+        <input type="hidden" name="expense_id" value="{{expense_id}}"/>
+    </div>
+</form>
+</br>
+</br>
+</br>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'accountpiggy/base_room_page.html' %}
+{% load static %}
+{% block title %}정산{% endblock %}
+{% block header %}정산{% endblock %}
+
+{% block link %}
+
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="{% static 'accountpiggy/room_expense_cleanup.css' %}?after">
+<script type="text/javascript" src="{% static 'accountpiggy/transfer_list.js' %}?after"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 sectionTitle1">
+            여행 정산
+        </div>
+        <div class="col-4 text-left">
+            총 지출 금액
+        </div>
+        <div class="col-8 text-center">
+            {{total_members_expense}}원
+        </div>
+        {% if current_travel_days > 1 %}
+        <div class="col-4 text-left">
+            일별 지출 금액 {{current_travel_days}}일 차
+        </div>
+        <div class="col-8 text-center">
+            {{total_members_daily_expense}}원
+        </div>
+        {% endif %}
+    </div>
+</div>
+<div id="total_member_expense_canvas">
+</div>
+<hr/>
+<div class="container">
+    <div class="row">
+        <div class="col-12 sectionTitle1">
+            개인 정산
+        </div>
+        <div class="col-4 text-left">
+            여행 경비
+        </div>
+        <div class="col-8 text-center">
+            {{realexpense}}원
+        </div>
+    </div>
+    <div class="row accountTransferList">
+    {% include 'accountpiggy/transfer_list.html' %}
+    </div>
+</div>
+</br>
+</br>
+</br>
+</br>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    // Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+  ['Task', 'Hours per Day'],
+  ['식사', {{expense_food}}],
+  ['숙소', {{expense_sleep}}],
+  ['(기호식품) ex)술/커피', {{expense_drink}}],
+  ['교통', {{expense_transfer}}],
+  ['기타', {{expense_etc}}]
+]);
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title':'여행 지출 정보', 'width':375, 'height':250};
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.PieChart(document.getElementById('total_member_expense_canvas'));
+  chart.draw(data, options);
+};
+</script>
+{% endblock %}

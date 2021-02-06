@@ -1,0 +1,60 @@
+{% if recv_item_list %}
+<div class="col-12 sectionTitle2">
+    받을 것
+</div>
+{% for recv_item in recv_item_list %}
+<div class="row transferItem">
+    <div class="col-4 text-left">
+        {{ recv_item.sender.nickname }}
+    </div>
+    <div class="col-4 text-center">
+        {{recv_item.value}}원
+    </div>
+    <div class="col-4 text-center">
+        <input type="hidden" name="entry_id" value="{{recv_item.id}}">
+        <a class="btn btn-outline-dark button_recv state{{recv_item.state}}"
+           href="{% url 'accountpiggy:transfer_receiver_communication' room.id %}">
+            {% if recv_item.state == 3 %}
+            완료
+            {% else %}
+            받았다.
+            {% endif %}
+        </a>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if send_item_list %}
+<div class="col-12 sectionTitle2">
+    보낼 것
+</div>
+{% for send_item in send_item_list %}
+<div class="row transferItem">
+    <div class="col-12">
+        {{ send_item.receiver.user.account.bank }} {{ send_item.receiver.user.account.number }}
+    </div>
+    <div class="col-4 text-left">
+        {{ send_item.receiver.nickname }}
+    </div>
+    <div class="col-4 text-center">
+        {{ send_item.value }}원
+    </div>
+    <div class="col-4 text-center">
+        <input type="hidden" name="entry_id" value="{{send_item.id}}">
+        <a class="btn btn-outline-dark button_send state{{send_item.state}}"
+           href="{% url 'accountpiggy:transfer_sender_communication' room.id %}">
+            {% if send_item.state == 0 %}
+            확인요청
+            {% elif send_item.state == 1 %}
+            확인중
+            {% elif send_item.state == 2 %}
+            재확인요청
+            {% else %}
+            완료
+            {% endif %}
+        </a>
+    </div>
+</div>
+{% endfor %}
+{% endif %}

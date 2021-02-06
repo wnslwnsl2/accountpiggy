@@ -1,0 +1,7 @@
+{% for expense in expense_list %}
+    {{expense.datetime}}/{{ expense.purpose }}/{{ expense.expend_user.name }}/{{ expense.cost }}/
+        {% for user in expense.users.all %}
+            {{ user.name }}
+        {% endfor %}
+    </br>
+{% endfor %}

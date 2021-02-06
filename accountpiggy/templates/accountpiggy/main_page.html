@@ -1,0 +1,13 @@
+{% extends 'accountpiggy/base.html' %}
+{% block title %}정산 돼지{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+안녕하세요 {{user.name}}님
+<div id="room_find_create">
+<a href="{% url 'accountpiggy:room_search_page' %}">방 찾기</a>  <a href="{% url 'accountpiggy:room_create_page' %}">방 만들기</a>
+</div>
+{% include 'accountpiggy/room_list.html' %}
+{% else %}
+로그인을 하거나 회원가입을 해줘
+{% endif %}
+{% endblock %}

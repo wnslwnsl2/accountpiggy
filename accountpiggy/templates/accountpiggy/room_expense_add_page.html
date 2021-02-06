@@ -1,0 +1,10 @@
+{% extends 'accountpiggy/base.html' %}
+{% block title %}지출입력{% endblock %}
+{% block content %}
+<h3>지출입력</h3>
+<form method="post" action="{% url 'accountpiggy:room_expense_add_page' room.id %}">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="입력"/>
+</form>
+{% endblock %}

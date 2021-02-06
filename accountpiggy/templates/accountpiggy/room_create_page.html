@@ -1,0 +1,13 @@
+{% extends 'accountpiggy/base.html' %}
+{% block title %}방만들기{% endblock %}
+{% block content %}
+<h3>방만들기</h3>
+<form method="post" action=".">
+    {% csrf_token %}
+    {% for field in form %}
+    <p>{% if field.required %}*{% endif %}{{field.label}}</p>
+    <p>{{field}}</p>
+    {% endfor %}
+    <input type="submit" value="방만들기"/>
+</form>
+{% endblock %}

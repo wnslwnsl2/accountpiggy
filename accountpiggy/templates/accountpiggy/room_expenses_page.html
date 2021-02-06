@@ -1,0 +1,7 @@
+{% extends 'accountpiggy/base.html' %}
+{% block title %}지출내역{% endblock %}
+{% block content %}
+<h3>지출내역</h3>
+<h2><a href="{% url 'accountpiggy:room_expense_add_page' room.id %}">+추가하기</a></h2>
+{% include 'accountpiggy/expense_list.html' %}
+{% endblock %}

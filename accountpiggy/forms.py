@@ -1,12 +1,19 @@
-from .models import Room,Expense
+from .models import Room,Expense,IndexedUser
 from accounts.models import User
 from django import forms
 import datetime
 
+class CleanedPageUserSelectForm(forms.Form):
+    selectedUser = forms.ModelChoiceField(
+        label='정산할 유저',
+        widget=forms.RadioSelect,
+        queryset=IndexedUser.objects.all(),
+    )
+
 class RoomCreateForm(forms.ModelForm):
     class Meta:
         model = Room
-        fields = ('name','max_number_of_members','start_date','end_date')
+        fields = ('name','start_date','end_date')
         widgets={
             'start_date':forms.DateInput(attrs={'default':datetime.date.today(),'class':'form-control', 'type':'date'}),
             'end_date':forms.DateInput(attrs={'default':datetime.date.today(),'class':'form-control', 'type':'date'}),
@@ -16,21 +23,12 @@ class ExpenseCreateForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(
         label="멤버들",
         widget=forms.CheckboxSelectMultiple,
-        queryset=User.objects.all()
+        queryset=IndexedUser.objects.all()
     )
-    # purpose_category = forms.MultipleChoiceField(
-    #     choices=Expense.purpose_categories,
-    #     widget=forms.RadioSelect)
 
     class Meta:
         model = Expense
-        fields = ('users','cost','purpose','purpose_category','datetime',)
-    #
-    # def __init__(self,*args,**kwargs):
-    #     super(ExpenseCreateForm, self).__init__(*args, **kwargs)
-    #     room = kwargs.pop('room')
-    #     self.fields['users'].queryset = room.users.all()
-    #
-    #     # spend_user = kwargs.pop('spend_user')
-    #     # choices = room.users
-    #     # self.fields['users'].queryset = choices
+        fields = ('expend_user','users','cost','purpose','purpose_category','datetime',)
+
+class NameForm(forms.Form):
+    name = forms.CharField(label='너의 이름은',max_length=100)

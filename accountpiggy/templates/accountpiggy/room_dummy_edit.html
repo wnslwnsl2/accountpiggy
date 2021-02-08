@@ -1,0 +1,10 @@
+{% extends 'accountpiggy/base_room_page.html' %}
+{% block title %}닉네임 변경{% endblock %}
+{% block content %}
+<h3>닉네임 변경</h3>
+<form method="get" action="{% url 'accountpiggy:room_dummy_edit' room.id %}">
+    <input type="hidden" name="user_id" value="{{user_id}}"/>
+    <input type="hidden" name="index" value="{{index}}"/>
+    <input type="text" name="changed_nickname" value="{{nickname}}"/><input type="submit" value="변경"/>
+</form>
+{% endblock %}

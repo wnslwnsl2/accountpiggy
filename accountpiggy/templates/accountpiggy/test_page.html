@@ -1,0 +1,11 @@
+{% extends 'accountpiggy/base_main_page.html'%}
+{% block content %}
+{% if name %}
+내 이름은 {{name}}입니다.
+{% endif %}
+<form method="post" action="{% url 'accountpiggy:test_page' %}">
+    {% csrf_token %}
+    {{ form.name.label }}:{{ form.name }}
+    <input type="submit" value="입력">
+</form>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'accountpiggy/base.html' %}
+{% block bottom %}
+<div id="nav_bottom_room">
+    <a href="{% url 'accountpiggy:room_info_page' room.id %}">정보</a>
+    <a href="{% url 'accountpiggy:room_expenses_page' room.id %}">내역</a>
+</div>
+{% endblock %}

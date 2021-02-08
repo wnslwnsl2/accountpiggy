@@ -10,7 +10,7 @@ def register_page(request):
         form = CreateAccountForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('/accounts/login')
     else:
         form = CreateAccountForm()
 

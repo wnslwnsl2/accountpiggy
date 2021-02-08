@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 # Create your models here.
 
 class MyUserManager(BaseUserManager):
+    dummyemail = 'dummydummy@dummydummy.dummy'
+    dummyname = 'dummy'
     def create_user(self, email, name, password=None):
         """
         Creates and saves a User with the given email, date of
@@ -34,6 +36,18 @@ class MyUserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
+
+    def get_or_create_dummyuser(self):
+        try:
+            user = self.create_user(
+                email = self.dummyemail,
+                name = self.dummyname,
+            )
+            user.save(using=self._db)
+            return user
+        except:
+            user = User.objects.get(email=self.dummyemail,name=self.dummyname)
+            return user
 
 
 class User(AbstractBaseUser):

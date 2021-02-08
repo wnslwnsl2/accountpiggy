@@ -1,7 +1,8 @@
 {% for expense in expense_list %}
-    {{expense.datetime}}/{{ expense.purpose }}/{{ expense.expend_user.name }}/{{ expense.cost }}/
+<a>수정</a><a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}">삭제</a>
+    {{expense.datetime}} -- 목적: {{ expense.purpose }} -- 사용자:{{expense.expend_user.nickname}}({{ expense.expend_user.user.name }}) -- 금액:{{ expense.cost }} -- 참여자:
         {% for user in expense.users.all %}
-            {{ user.name }}
+            {{user.nickname}}({{ user.user.name }})
         {% endfor %}
     </br>
 {% endfor %}

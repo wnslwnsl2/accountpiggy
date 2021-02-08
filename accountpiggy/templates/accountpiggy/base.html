@@ -1,18 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
-    <style>
-        #nav_top{
-            background-color: pink;
-            text-align: center;
-        }
-        #nav_bottom{
-            background-color: #99EDC3;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'accountpiggy/style.css' %}?after" type="text/css"/>
+    <script
+          src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+          crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="nav_top">
@@ -20,15 +16,13 @@
     {% if user.is_authenticated %}
         <a href="{% url 'accounts:logout' %}">로그 아웃</a>
         <a>설정</a>
+        안녕 {{user.name}}
     {% else %}
         <a href="{% url 'accounts:login' %}">로그인</a>
         <a href="{% url 'accounts:register' %}">회원가입</a>
     {% endif %}
 </div>
 {% block content %}{% endblock %}
-<div id="nav_bottom">
-    <a href="/">여행</a>
-    <a>친구</a>
-</div>
+{% block bottom %}{% endblock %}
 </body>
 </html>

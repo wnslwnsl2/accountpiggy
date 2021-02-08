@@ -1,0 +1,20 @@
+{% extends 'accountpiggy/base_room_page.html' %}
+{% block title %}지출내역{% endblock %}
+{% block content %}
+<h3>지출내역</h3>
+<form method="post" action="{% url 'accountpiggy:room_expense_cleanup_page' room.id %}">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="선택"/>
+</form>
+
+<h3>받을 것</h3>
+{% for recv_item in recv_item_list %}
+    {{ recv_item }}</br>
+{% endfor %}
+
+<h3>보낼 것</h3>
+{% for send_item in send_item_list %}
+    {{ send_item }}</br>
+{% endfor %}
+{% endblock %}

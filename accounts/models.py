@@ -1,11 +1,9 @@
+import accountpiggy.models
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
-
 # Create your models here.
 
 class MyUserManager(BaseUserManager):
-    dummyemail = 'dummydummy@dummydummy.dummy'
-    dummyname = 'dummy'
     def create_user(self, email, name, password=None):
         """
         Creates and saves a User with the given email, date of
@@ -37,17 +35,23 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def get_or_create_dummyuser(self):
+"""
+user.dummy 로 접근 할 수 있도록 하는 Manager
+"""
+class DummyManager(models.Manager):
+    dummyemail = 'dummydummy@dummydummy.dummy'
+    dummyname = 'dummy'
+
+    def get_queryset(self):
         try:
-            user = self.create_user(
-                email = self.dummyemail,
-                name = self.dummyname,
+            user = User.objects.create_user(
+                email=self.dummyemail,
+                name=self.dummyname,
             )
             user.save(using=self._db)
-            return user
         except:
             user = User.objects.get(email=self.dummyemail,name=self.dummyname)
-            return user
+        return user
 
 
 class User(AbstractBaseUser):
@@ -64,11 +68,15 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
+    dummy = DummyManager()
 
     USERNAME_FIELD = 'email' #로그인 할 때 쓰는 건가?
     # 다른것들
         # EMAIL_FIELD
     REQUIRED_FIELDS = ['name']
+
+    def is_dummy(self):
+        return self.email == DummyManager.dummyemail
 
     def __str__(self):
         return '{}({})'.format(self.name,self.email)
@@ -82,3 +90,8 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    @property
+    def rooms(self):
+        member_set = self.member_set
+        return [member.room for member in member_set.all()]

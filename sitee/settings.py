@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     ".ap-northeast-2.compute.amazonaws.com",
     ".nbbanggogo.com",
+    "localhost"
 ]
 
 
@@ -131,7 +132,7 @@ STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'accounts.User'
 
-STATIC_ROOT = os.path.join(BASE_DIR,'static')
+STATIC_ROOT = os.path.join(BASE_DIR,'site/assets')
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS=(

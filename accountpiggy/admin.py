@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Room,Expense,IndexedUser,ExpenseMatrix,ExpenseMatrixEntry
+from . import models
+from .models import Room,Expense,Member,ExpenseMatrix,ExpenseMatrixEntry
 
 # Register your models here.
 
@@ -14,8 +15,9 @@ class AdminExpense(admin.ModelAdmin):
     search_fields = ("spend_user",)
 
 # Register your models here.
-admin.site.register(IndexedUser)
+admin.site.register(Member)
 admin.site.register(Room)
 admin.site.register(Expense)
 admin.site.register(ExpenseMatrix)
 admin.site.register(ExpenseMatrixEntry)
+admin.site.register(models.EnteringQA)

@@ -3,27 +3,28 @@
 {% block content %}
 <h3>방 정보</h3>
 방 이름:{{room.name}}</br>
+질문:{{roomQ}} 답변:{{roomA}}</br>
+닉네임:{{indexed_user.nickname}}<a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{indexed_user.index}}" class="edit">변경</a></br>
 방 참가자 리스트</br>
 <ul class="room_users">
-{% for user in users %}
+    {% for user in users %}
     <li>({{ user.index }}){{user.nickname}}({{ user.user.name }})
         {% if is_admin %}
-            {% if user.is_dummy %}
-                <a href="{% url 'accountpiggy:room_dummy_edit' room.id %}?user_id={{user.user.id}}&index={{user.index}}" class="edit">변경</a>
-                <a href="{% url 'accountpiggy:room_dummy_delete' room.id %}?user_id={{user.user.id}}&index={{user.index}}" class="edit">삭제</a>
+            {% if user.user.is_dummy %}
+                <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">변경</a>
+                <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}" class="edit">삭제</a>
                 {% elif not user.is_admin %}
-                <a href="{% url 'accountpiggy:room_dummy_delete' room.id %}?user_id={{user.user.id}}&index={{user.index}}" class="edit">강퇴</a>
+                <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}" class="edit">강퇴</a>
             {% endif %}
         {% endif %}</li>
     {% endfor %}
-    {% if is_admin %}
-    <form method="post" action="{% url 'accountpiggy:room_info_page' room.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="adddummy"/>
-        <input type="submit" value="더미추가"/>
-    </form>
-    {% endif %}
 </ul>
+{% if is_admin %}
+<form method="post" action="{% url 'accountpiggy:room_info_page' room.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="adddummy"/>
+    <input type="submit" value="더미추가"/>
+</form>
+{% endif %}
 방 대기자 리스트
-
 {% endblock %}

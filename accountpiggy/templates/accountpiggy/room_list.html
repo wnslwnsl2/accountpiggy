@@ -1,5 +1,7 @@
-<ul>
+<div class="list-group">
 {% for room in rooms %}
-    <li><a href="{% url 'accountpiggy:room_reception_page' room.id %}">{{room.get_description}}</a></li>
+    <a class="list-group-item list-group-item-action" href="{% url 'accountpiggy:room_reception_page' room.id %}">
+        {{room.get_description}}
+    </a>
 {% endfor %}
-</ul>
+</div>

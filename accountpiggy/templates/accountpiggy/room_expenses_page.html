@@ -1,6 +1,7 @@
 {% extends 'accountpiggy/base_room_page.html' %}
 {% load static %}
 {% block title %}지출내역{% endblock %}
+{% block head %}{% static '' %}{% endblock %}
 {% block header %}지출내역{% endblock %}
 {% block content %}
 <div class="container">
@@ -12,6 +13,10 @@
             <a class="btn btn-dark" role="button" href="{% url 'accountpiggy:room_expense_cleanup_page' room.id %}">정산하기</a>
         </div>
     </div>
-    {% include 'accountpiggy/expense_list.html' %}
 </div>
+{% if expense_exist %}
+    {% include 'accountpiggy/expense_list.html' %}
+{% else %}
+    엄서용
+{% endif %}
 {% endblock %}

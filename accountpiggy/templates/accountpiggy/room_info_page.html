@@ -1,7 +1,20 @@
 {% extends 'accountpiggy/base_room_page.html' %}
 {% block title %}방 정보{% endblock %}
 {% block content %}
+<script type="text/javascript">
+    function copy_url() {
+        var obj = document.getElementById("shareUrl");
+        console.log(obj)
+        obj.select();
+        document.execCommand("copy");
+        obj.setSelectionRange(0,0);
+    }
+</script>
 <h3>방 정보</h3>
+<div class="container">
+    <input type="text" id="shareUrl" value="http://localhost:8000/room/info/1/"/>
+    <button class="btn btn-dark" onclick="copy_url();">공유하기</button>
+</div>
 방 이름:{{room.name}}</br>
 질문:{{roomQ}} 답변:{{roomA}}</br>
 닉네임:{{indexed_user.nickname}}<a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{indexed_user.index}}" class="edit">변경</a></br>

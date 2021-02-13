@@ -26,18 +26,48 @@ class RoomCreateForm(forms.ModelForm):
 class ExpenseCreateForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(
         label="멤버들",
-        widget=forms.CheckboxSelectMultiple,
-        queryset=Member.objects.all()
-    )
-    expend_user = forms.ModelChoiceField(
-        widget = forms.RadioSelect(
-            attrs={'class':'form-check-input'}
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                'class':'form-check-input',
+                'type':'checkbox'
+            }
         ),
         queryset=Member.objects.all(),
+    )
+    expend_user = forms.ModelChoiceField(
+        queryset=Member.objects.all(),
+    )
+    purpose = forms.CharField(
+        label="목적",
+        widget = forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder':'사용 목적을 입력해 주세요.'
+                }
+            )
+    )
+    cost = forms.CharField(
+        label="비용",
+        widget=forms.NumberInput(
+            attrs={
+                'value':0,
+                'class':'form-control',
+                'min':0
+            }
+        )
     )
     purpose_category = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=Expense.purpose_categories
+    )
+    datetime = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                'value': datetime.date.today(),
+                'class':'form-control',
+                'type':'date'
+            }
+        ),
     )
 
     class Meta:

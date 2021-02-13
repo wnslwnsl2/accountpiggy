@@ -7,27 +7,29 @@
     <div class="form-group">
         <h5>지출자</h5>
         {% if is_admin %}
-        {% for radio in form.expend_user %}
-        <div class="form-check">
-            {{ radio.tag }}
-            <label class="form-check-label" for="{{radio.id_for_label}}">{{ radio.choice_label }}</label>
-        </div>
-        {% endfor %}
+        {{form.expend_user}}
+<!--        {% for radio in form.expend_user %}-->
+<!--        <div class="form-check">-->
+<!--            {{ radio.tag }}-->
+<!--            <label class="form-check-label" for="{{radio.id_for_label}}">{{ radio.choice_label }}</label>-->
+<!--        </div>-->
+<!--        {% endfor %}-->
         {% endif %}
 
         <h5>지출참가자</h5>
-        <div class="input-group mb-3">
-        {% for user in form.users %}
+        <div class="form-check">
+            {% for user in form.users %}
             <div class="input-group-prepend">
-                <input type="checkbox" class="btn btn-outline-secondary">Button</input>
+                {{user.tag}}
+                <label class="form-check-label" for="{{user.id_for_label}}">{{ user.choice_label }}</label>
             </div>
-        {% endfor %}
+            {% endfor %}
         </div>
-        {{form.users}}
 
-
-
-        용도:{{form.purpose}} 금액:{{form.cost}}
+        <label for="form.purpose.id_for_label">{{form.purpose.label}}</label>
+        {{form.purpose}}
+        <label for="form.purpose.id_for_cost">{{form.cost.label}}</label>
+        {{form.cost}}
         </br>분류:{{form.purpose_category}}
         </br>쓴시간</br>{{form.datetime}}
         </br></br>

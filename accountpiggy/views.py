@@ -130,20 +130,33 @@ def room_expenses_page(request,room_id):
     all_expense_list = Expense.objects.expenses_in_room(room=room).order_by('-datetime')
 
     if len(all_expense_list)!=0:
+        #
         last_date = all_expense_list[0].datetime.date()
         eids = []
         eid = models.ExpensesInDay(last_date)
 
         for expense in all_expense_list:
+            # 날짜가 같으면 eid에 저장한다.
             if expense.datetime.date() == last_date:
                 eid.add_expense(expense)
             else:
+                # 날짜가 달라지면, eids에 eid를 저장한다.
                 eids.append(eid)
+
+                # last_date를 갱신한다.
                 last_date=expense.datetime.date()
+                # eid를 초기화한다.
                 eid=models.ExpensesInDay(last_date)
+                # 현재 expense를 넣어준다.
                 eid.add_expense(expense)
 
+        eids.append(eid)
+
         context['expense_in_day_list'] = eids
+        #print(eids[0].date)
+        context['expense_exist'] = True
+    else:
+        context['expense_exist'] = False
 
     return render(request, 'accountpiggy/room_expenses_page.html', context)
 

@@ -1,0 +1,31 @@
+.expense-day {
+    background-color: #C6C6C6;
+    border : 1px solid gray;
+    margin : 0 0 0 0;
+}
+.expense {
+    border-bottom : 1px solid gray;
+    margin : 0 0 0 0;
+}
+
+.expenseSpendUser{
+}
+
+.expense-first-row{
+    height: 2.0rem;
+}
+.expense-second-row{
+    height: 2.0rem;
+}
+.expense-time{
+    font-size:75%;
+}
+.expense-users{
+    font-size:75%;
+}
+.expensePurpose{
+    font-size:75%;
+}
+.expenseCost{
+    font-size:75%;
+}

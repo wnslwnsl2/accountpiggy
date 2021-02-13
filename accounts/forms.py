@@ -2,19 +2,63 @@ from django import forms
 from .models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        label='이메일',
+        widget=forms.EmailInput(
+            attrs={
+                'class':'form-control',
+                'placeholder':'이메일을 입력해 주세요.',
+            }
+        )
+    )
+    password = forms.CharField(
+        label='비밀번호',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '비밀번호를 입력해 주세요.',
+            }
+        )
+    )
+
 class CreateAccountForm(forms.ModelForm):
     password1 = forms.CharField(
         label="비밀번호",
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '비밀번호를 입력해 주세요.',
+            }
+        )
     )
     password2 = forms.CharField(
         label="비밀번호 확인",
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '비밀번호를 입력해 주세요.',
+            }
+        )
     )
 
     class Meta:
         model = User
         fields = ('email','name')
+        widgets = {
+            'email':forms.EmailInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': '사용하실 이메일을 입력해 주세요.',
+                }
+            ),
+            'name':forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': '이름을 입력해 주세요.',
+                }
+            )
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']

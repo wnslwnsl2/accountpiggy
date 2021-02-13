@@ -263,6 +263,16 @@ class ExpenseManager(models.Manager):
     def expenses_in_room(self,room):
         return super().get_queryset().filter(room=room)
 
+
+class ExpensesInDay:
+    def __init__(self,date):
+        self.date = date
+        self.expense_list = []
+
+    def add_expense(self,expense):
+        self.expense_list.append(expense)
+
+
 class Expense(models.Model):
     """
     지출 내역 모델
@@ -289,6 +299,12 @@ class Expense(models.Model):
 
     def __str__(self):
         return self.purpose
+
+    def date(self):
+        return self.datetime.date()
+
+    def time(self):
+        return self.datetime.time().strftime('%H:%M:%S')
 
 class EnteringQA(models.Model):
     Q = models.CharField(verbose_name="질문",max_length=10,default='요이')

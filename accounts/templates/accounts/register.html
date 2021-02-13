@@ -2,7 +2,12 @@
 {% block content %}
 <form method="post" action=".">
     {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" name="create_user" value="회원가입">
+    <div class="form-group">
+        {% for field in form %}
+            <label for="{{field.id_for_label}}">{{field.label}}</label>
+            {{field}}
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-dark" name="create_user">회원가입</button>
 </form>
 {% endblock %}

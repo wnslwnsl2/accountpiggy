@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import CreateAccountForm
+from . import forms
 from django.contrib.auth import logout,login,authenticate
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -20,21 +21,23 @@ def register_page(request):
 
 def login_page(request):
     if request.method=='POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
+        form = forms.LoginForm(request.POST)
 
-        if user is not None:
-            login(request,user)
-            return redirect('/')
-        else:
-            messages.info(request,'Username OR password is incorrect')
+        if form.is_valid():
+            username = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(request,username=username,password=password)
 
-        context = {'username':username,
-                   'password':password}
-        return render(request, 'accounts/login.html', context)
+            if user is not None:
+                login(request,user)
+                return redirect('/')
+            else:
+                messages.info(request,'Username OR password is incorrect')
+    else:
+        form = forms.LoginForm()
 
     context = {}
+    context['form'] = form
     return render(request, 'accounts/login.html', context)
 
 def logout_page(request):

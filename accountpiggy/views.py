@@ -106,6 +106,8 @@ def room_reception_page(request,room_id):
     context['room']=room
     return render(request,'accountpiggy/room_reception_page.html',context)
 
+
+
 """
 지출 내역 정보
 ============
@@ -125,7 +127,24 @@ def room_expenses_page(request,room_id):
     context = {}
     room = get_object_or_404(Room, id=room_id)
     context['room'] = room
-    context['expense_list'] = Expense.objects.expenses_in_room(room=room).order_by('-datetime')
+    all_expense_list = Expense.objects.expenses_in_room(room=room).order_by('-datetime')
+
+    if len(all_expense_list)!=0:
+        last_date = all_expense_list[0].datetime.date()
+        eids = []
+        eid = models.ExpensesInDay(last_date)
+
+        for expense in all_expense_list:
+            if expense.datetime.date() == last_date:
+                eid.add_expense(expense)
+            else:
+                eids.append(eid)
+                last_date=expense.datetime.date()
+                eid=models.ExpensesInDay(last_date)
+                eid.add_expense(expense)
+
+        context['expense_in_day_list'] = eids
+
     return render(request, 'accountpiggy/room_expenses_page.html', context)
 
 """

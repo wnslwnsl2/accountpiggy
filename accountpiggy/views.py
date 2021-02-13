@@ -5,6 +5,9 @@ from accounts.models import User
 from django.shortcuts import render,redirect,get_object_or_404,reverse
 from django.http import HttpResponse,HttpResponseRedirect
 
+def test(request):
+    return render(request,'accountpiggy/test.html')
+
 """
     메인
     ===

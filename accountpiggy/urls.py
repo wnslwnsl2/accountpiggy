@@ -4,6 +4,7 @@ from django.urls import path
 app_name = 'accountpiggy'
 
 urlpatterns = [
+    path('test/',views.test,name='test'),
     path('',views.main_page,name='main_page'),
 
     # 방 만들기/ 찾기

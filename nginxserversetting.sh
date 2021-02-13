@@ -7,8 +7,6 @@
 sudo cp -f /srv/accountpiggy/.config/nginx/accountpiggy.conf /etc/nginx/sites-available/accountpiggy.conf;
 #sited-available에 복사된 설정 파일을 sites-enables폴더 안에서도 링크해준다.
 sudo ln -sf /etc/nginx/sites-available/accountpiggy.conf /etc/nginx/sites-enabled/accountpiggy.conf;
-#sites-enables 폴더 안의 default 파일을 삭제한다.
-sudo rm /etc/nginx/sites-enabled/default;
 
 sudo systemctl daemon-reload;
 sudo systemctl restart uwsgi nginx;

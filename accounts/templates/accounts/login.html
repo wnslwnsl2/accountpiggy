@@ -2,7 +2,7 @@
 {% block title %}로그인 페이지{% endblock %}
 {% block content %}
 <h3>로그인</h3>
-<form method="post" action=".">
+<form method="post" action="{% url 'accounts:login' %}?next={{next}}">
     {% csrf_token %}
     <div class="form-group">
         <label for="{{form.email.id_for_label}}" >{{form.email.label}}</label>

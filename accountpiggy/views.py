@@ -1,9 +1,13 @@
+from .decorators import membership_required
 from .forms import RoomCreateForm,ExpenseCreateForm,NameForm,CleanedPageUserSelectForm
 from . import models
 from .models import Room,Expense,Member, ExpenseMatrix, ExpenseMatrixEntry
 from accounts.models import User
 from django.shortcuts import render,redirect,get_object_or_404,reverse
 from django.http import HttpResponse,HttpResponseRedirect
+from django.utils import timezone
+from django.views.generic import View
+from django.contrib.auth.decorators import login_required
 
 def test(request):
     return render(request,'accountpiggy/test.html')
@@ -36,22 +40,16 @@ def main_page(request):
 설명:
     방 만들기
 """
+@login_required
 def room_create_page(request):
-    """
-        Room.objects.create_room
-            1) room 생성
-            2) user - room 연결
-            3) matrix 생성
-    """
+    form = RoomCreateForm()
     if request.method == "POST":
         form = RoomCreateForm(request.POST)
         if form.is_valid():
             room = Room.objects.create_room(form,request.user)
             return HttpResponseRedirect(reverse(viewname="accountpiggy:room_reception_page",kwargs={'room_id':room.id}))
-    else:
-        form = RoomCreateForm()
-    context = {'form':form}
-    return render(request,'accountpiggy/room_create_page.html',context)
+    context = {'form': form}
+    return render(request, 'accountpiggy/room_create_page.html', context)
 
 
 """
@@ -61,6 +59,7 @@ def room_create_page(request):
     설명:
         GET으로 검색어 가져와서 방 찾는다
 """
+@login_required
 def room_search_page(request):
     """
         Point
@@ -80,14 +79,8 @@ def room_search_page(request):
     1) user가 방에 포함되었으면 방 내역 페이지(room_expenses_page)로 redirect한다.
     2) user가 방에 포함되지 않았으면 방 코드를 입력하는 창(리셉션)을 보여준다.
 """
+@login_required
 def room_reception_page(request,room_id):
-    """
-        TODO 방 코드만들기
-            1) 방 생성시 방 코드 생성 알고리즘 검색 > room에서 코드 관리
-            2) 리셉션에서 room 질문코드를 context로 내보냄
-            3) POST['codeword']와 답변 코드를 비교함
-        TODO 방 접근 권한 설정하기
-    """
     context = {}
     room = get_object_or_404(Room,id=room_id)
 
@@ -96,10 +89,9 @@ def room_reception_page(request,room_id):
         return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
 
     if request.method == "POST":
-        if request.POST['codeword']=='고구마':
+        if request.POST['codeword']==room.enteringqa.A:
             # 사용자를 방에 연결시켜줌 (IndexedUser 만들기)
-            # TODO user.indexedUser 기능
-            participantUser = Member.objects.create(user=request.user, room=room, index=room.get_next_index(), is_admin=False)
+            participantUser = Member.objects.create(user=request.user, room=room, index=room.get_next_index(),nickname= request.user.name,is_admin=False)
             participantUser.save()
             return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
 
@@ -114,14 +106,10 @@ def room_reception_page(request,room_id):
 
 사용자의 지출내역을 보여준다. 
 """
+@login_required
+@membership_required
 def room_expenses_page(request,room_id):
     """
-        TODO
-            사용자의 지출내역을 일자별로 정렬하여 보여준다.
-            일자 별로 정렬하여 보여주는 클래스를 만들어서 사용해야 할 듯
-            ExpensesInDay
-            - day
-            - expenses
         TODO 추가하기 & 정산하기 한페이지에서 이뤄지도록
     """
     context = {}
@@ -131,20 +119,20 @@ def room_expenses_page(request,room_id):
 
     if len(all_expense_list)!=0:
         #
-        last_date = all_expense_list[0].datetime.date()
+        last_date = timezone.localdate(all_expense_list[0].datetime)
         eids = []
         eid = models.ExpensesInDay(last_date)
 
         for expense in all_expense_list:
             # 날짜가 같으면 eid에 저장한다.
-            if expense.datetime.date() == last_date:
+            if timezone.localdate(expense.datetime) == last_date:
                 eid.add_expense(expense)
             else:
                 # 날짜가 달라지면, eids에 eid를 저장한다.
                 eids.append(eid)
 
                 # last_date를 갱신한다.
-                last_date=expense.datetime.date()
+                last_date=timezone.localdate(expense.datetime)
                 # eid를 초기화한다.
                 eid=models.ExpensesInDay(last_date)
                 # 현재 expense를 넣어준다.
@@ -158,6 +146,8 @@ def room_expenses_page(request,room_id):
     else:
         context['expense_exist'] = False
 
+    context['indexed_user'] = Member.objects.get(user=request.user, room=room)
+
     return render(request, 'accountpiggy/room_expenses_page.html', context)
 
 """
@@ -168,65 +158,57 @@ def room_expenses_page(request,room_id):
 
 특이:
     현재, 방장만 돈 쓴자를 선택할 수 있게 해두었다.
+    수정하기 위해 접근/생성하기 위해 접근 하는 것
+    실제로 수정이 이루어지는 부분은 POST로 접근할 때 이루어져야 한다.
 """
+@login_required
+@membership_required
 def room_expense_save_page(request,room_id):
     """
         TODO 돈쓴자 처음에 바로 방장 자신으로 선택되도록
         TODO 돈 보낸자 처음에 모두 선택되도록
         TODO 돈 보낸자 all 버튼, 내가 쏜다 버튼
-        TODO 쓴시간 입력 date time 나누어 사용자가 쉽게 입력 할 수 있도록
-        TODO expense save refactoring
     """
     context = {}
     room = get_object_or_404(Room, id=room_id)
-    indexedUser = Member.objects.get(room=room, user=request.user)
+    # 방장인지 알려고
+    current_member = Member.objects.get(room=room, user=request.user)
 
     if request.method == "POST":
+        # 아 수정..
         expense_id = int(request.POST['expense_id'])
         form = ExpenseCreateForm(request.POST)
 
         # 방장만 expend_user를 선택할 수 있도록 한다.
         # 방장인지 여부에 따라서 expend_user 필드의 required를 설정함
-        if indexedUser.is_admin:
+        if current_member.is_admin:
             form.fields['expend_user'].required = True
         else:
             form.fields['expend_user'].required = False
 
         if form.is_valid():
-            if expense_id==-1:
-                if indexedUser.is_admin:
-                    spend_user = form.cleaned_data['expend_user']
-                else:
-                    spend_user = indexedUser
-                Expense.objects.CreateExpense(form=form,room=room,indexed_user=spend_user)
+            if current_member.is_admin:
+                spend_user = form.cleaned_data['expend_user']
             else:
-                expense = Expense.objects.get(id=expense_id)
-                expense.expend_user = form.cleaned_data['expend_user']
-                expense.users.set(form.cleaned_data['users'].all())
-                expense.cost = form.cleaned_data['cost']
-                expense.purpose = form.cleaned_data['purpose']
-                expense.purpose_category = form.cleaned_data['purpose_category']
-                expense.datetime = form.cleaned_data['datetime']
-                expense.save()
-            # 추가 이체 할 경우
-            # if "save_another" in  request.POST:
-            #     expense_id=-1
-            #     form = ExpenseCreateForm({
-            #         'expend_user': form.cleaned_data['expend_user'],
-            #         'users': form.cleaned_data['users'].all(),
-            #     })
-            # else:
+                spend_user = current_member
+
+            Expense.objects.create_or_save(expense_id,form=form,room=room,indexed_user=spend_user)
+
             return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
     elif 'expense_id' in request.GET:
         expense_id = request.GET['expense_id']
         expense = Expense.objects.get(id=expense_id)
+        dt = timezone.localtime(expense.datetime)
+
         form = ExpenseCreateForm({
             'expend_user': expense.expend_user,
             'users': expense.users.all(),
             'cost': expense.cost,
             'purpose': expense.purpose,
             'purpose_category': expense.purpose_category,
-            'datetime':expense.datetime,
+            'date':dt.date(),
+            'hour':dt.hour,
+            'minute':dt.minute,
         })
     else:
         expense_id = -1
@@ -238,7 +220,7 @@ def room_expense_save_page(request,room_id):
     context['expense_id'] = expense_id
     context['room'] = room
     context['form'] = form
-    context['is_admin'] = indexedUser.is_admin
+    context['is_admin'] = current_member.is_admin
     return render(request, 'accountpiggy/room_expense_save_page.html', context)
 
 """
@@ -247,6 +229,8 @@ def room_expense_save_page(request,room_id):
 지출내역 id를 delete로 받아서 삭제를 하는데 이건 아닌듯
 POST로 바꿔야 겠다.
 """
+@login_required
+@membership_required
 def room_expense_delete(request,room_id):
     """
         TODO delete할 expense_id POST로 받아오기
@@ -263,6 +247,8 @@ def room_expense_delete(request,room_id):
 
 정산 알고리즘을 실행하고 정산 내역을 보여줌
 """
+@login_required
+@membership_required
 def room_expense_cleanup_page(request,room_id):
     """
         TODO 정산이 필요할 때만 정산을 진행하도록 변경
@@ -306,6 +292,8 @@ def room_expense_cleanup_page(request,room_id):
 1. 방 정보를 볼 수 있는 페이지
 2. 방장은 이곳에서 더미를 관리할 수 있다.
 """
+@login_required
+@membership_required
 def room_info_page(request,room_id):
     """
         TODO 사용자 - dummy 연결
@@ -334,6 +322,8 @@ nickname 변경
 
 room 과 index를 통해 유저의 nickname 변경한다
 """
+@login_required
+@membership_required
 def room_member_edit(request,room_id):
     """
         TODO 처음 페이지 들어올 때 닉네임 설정도 동일한 method로 사용할 수 있도록
@@ -369,10 +359,11 @@ def room_member_edit(request,room_id):
 방 멤버 삭제
 ===========
 """
+@login_required
+@membership_required
 def room_member_delete(request,room_id):
     """
         TODO (Ajax) POST로 바꿔줘야 됨 > POST로 바꿔주면 버튼(submit) 배치를 어떻게 해야할 지 난감함 > javascript html을 조금 더 하고 진행하자
-        TODO 삭제하고 나서 INDEX 재조정 알고리즘 작성
     """
     context = {}
     room = get_object_or_404(Room, id=room_id)

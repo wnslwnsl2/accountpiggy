@@ -31,7 +31,7 @@
         <label for="form.purpose.id_for_cost">{{form.cost.label}}</label>
         {{form.cost}}
         </br>분류:{{form.purpose_category}}
-        </br>쓴시간</br>{{form.datetime}}
+        </br>쓴시간</br>{{form.date}}{{form.hour}}{{form.minute}}
         </br></br>
         <input type="submit" name="save" value="저장"/><input type="submit" name="save_another" value="추가 이체하기"/>
         <input type="hidden" name="expense_id" value="{{expense_id}}"/>

@@ -134,4 +134,6 @@ STATICFILES_DIRS=(
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'site/assets')
 
+LOGIN_URL = '/accounts/login/'
+
 AUTH_USER_MODEL = 'accounts.User'

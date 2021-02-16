@@ -3,6 +3,7 @@ from . import code_generater
 from expense_matrix_cleaner import expense_matrix_cleaner
 from django.db import models
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.utils import timezone
 
 
 class RoomManager(models.Manager):
@@ -252,12 +253,40 @@ class ExpenseMatrixEntry(models.Model):
 
 
 class ExpenseManager(models.Manager):
-    def CreateExpense(self,form,room,indexed_user):
-        expense = form.save(commit=False)
-        expense.expend_user = indexed_user
-        expense.room = room
+    # 변경사항을 저장하거나 새로 만든다
+    def create_or_save(self,expense_id,form,room,indexed_user):
+        naivedate = form.cleaned_data['date']
+        naivedatetime = datetime.datetime(
+            naivedate.year,
+            naivedate.month,
+            naivedate.day,
+            int(form.cleaned_data['hour']),
+            int(form.cleaned_data['minute']),
+            00
+        )
+
+        if Expense.objects.filter(id=expense_id).exists():
+            expense = Expense.objects.get(id=expense_id)
+            expense.expend_user = indexed_user
+            expense.users.set(form.cleaned_data['users'].all())
+            expense.cost = form.cleaned_data['cost']
+            expense.purpose = form.cleaned_data['purpose']
+            expense.purpose_category = form.cleaned_data['purpose_category']
+            expense.datetime = timezone.make_aware(naivedatetime)
+        else:
+            expense = Expense.objects.create(
+                expend_user = indexed_user,
+                cost = form.cleaned_data['cost'],
+                purpose = form.cleaned_data['purpose'],
+                purpose_category = form.cleaned_data['purpose_category'],
+                datetime = timezone.make_aware(naivedatetime),
+                room=room,
+            )
+            expense.users.set(form.cleaned_data['users'].all())
         expense.save()
-        form.save_m2m()
+
+        return expense
+
 
     # room과 관련된 expense queryset을 return 한다.
     def expenses_in_room(self,room):
@@ -285,28 +314,21 @@ class Expense(models.Model):
         ('fo', '식사'),
         ('dr', '(기호식품) ex)술/커피'),
     )
-    # TODO users expend_user > USER가 지출 내역에 포함된 상태로 나가거나 강퇴당했어
-    #   이때 해당 user를 더미유저로 변경하는기능이 있으면 좋겠다.
     users = models.ManyToManyField(Member, related_name="participated_expense_set")
     expend_user = models.ForeignKey(Member, verbose_name='돈쓴자', related_name="expend_expense_set", on_delete=models.CASCADE)
     room = models.ForeignKey(Room,related_name="expense_set",on_delete=models.CASCADE)
     cost = models.IntegerField(verbose_name='금액',default=0,validators=[MinValueValidator(0)])
     purpose = models.CharField(verbose_name='용도',max_length=30,null=True,blank=True)
     purpose_category = models.CharField(verbose_name='카테고리',max_length=2,choices=purpose_categories)
-    datetime = models.DateTimeField(verbose_name='쓴시간',default=datetime.datetime.now)
+
+    datetime = models.DateTimeField(verbose_name='쓴시간')
 
     objects = ExpenseManager()
 
     def __str__(self):
         return self.purpose
 
-    def date(self):
-        return self.datetime.date()
-
-    def time(self):
-        return self.datetime.time().strftime('%H:%M:%S')
-
 class EnteringQA(models.Model):
     Q = models.CharField(verbose_name="질문",max_length=10,default='요이')
     A = models.CharField(verbose_name="답변",max_length=10,default='탱구리')
-    room = models.ForeignKey(Room,on_delete=models.CASCADE)
+    room = models.OneToOneField(Room,on_delete=models.CASCADE)

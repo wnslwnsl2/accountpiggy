@@ -1,3 +1,5 @@
+{% load tz %}
+{% localtime on %}
 <div class="container">
     {% for expense_in_day in expense_in_day_list %}
     <div class="row expense-day">
@@ -11,7 +13,7 @@
         <div class="col-10">
             <div class="row expense-first-row">
                 <div class="col-3 expense-time">
-                    {{expense.time}}
+                    {{expense.datetime|localtime|date:'H:i'}}
                 </div>
                 <div class="col-7 expense-users">
                     {% for user in expense.users.all %}
@@ -27,7 +29,9 @@
                     {{expense.cost}}원
                 </div>
                 <div class="col">
+                    {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
                     <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}">수정</a><a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}">삭제</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -35,3 +39,4 @@
     {% endfor %}
     {% endfor %}
 </div>
+{% endlocaltime %}

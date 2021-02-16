@@ -1,9 +1,9 @@
-{% extends 'accountpiggy/base_main_page.html' %}
+{% extends 'accountpiggy/base.html' %}
 {% block title %}참가 신청{% endblock %}
 {% block content %}
 <h3>참가 신청</h3>
 {{room.get_description}}</br>
-감자
+{{room.enteringqa.Q}}
 <form method="post" action="{% url 'accountpiggy:room_reception_page' room.id %}">
     {% csrf_token %}
     답:<input type="text" name="codeword"/>

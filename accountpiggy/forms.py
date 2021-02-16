@@ -2,6 +2,8 @@ from .models import Room,Expense,Member
 from accounts.models import User
 from django import forms
 import datetime
+from django.utils import timezone
+
 
 class NameForm(forms.Form):
     name = forms.CharField(max_length=100)
@@ -50,7 +52,6 @@ class ExpenseCreateForm(forms.ModelForm):
         label="비용",
         widget=forms.NumberInput(
             attrs={
-                'value':0,
                 'class':'form-control',
                 'min':0
             }
@@ -60,16 +61,43 @@ class ExpenseCreateForm(forms.ModelForm):
         widget=forms.RadioSelect,
         choices=Expense.purpose_categories
     )
-    datetime = forms.DateField(
+    date = forms.DateField(
         widget=forms.DateInput(
             attrs={
-                'value': datetime.date.today(),
+                'value': timezone.localtime(timezone.now()).date(),
                 'class':'form-control',
                 'type':'date'
             }
         ),
     )
+    hour = forms.IntegerField(
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control',
+                'type':'number',
+                'min':0,
+                'max':23
+            }
+        )
+    )
+    minute = forms.ChoiceField(
+        choices=(('00', '00'), ('30', '30')),
+        widget=forms.Select(
+            attrs={
+                'class':'form-control',
+                'type':'number',
+            }
+        )
+    )
 
     class Meta:
         model = Expense
-        fields = ('expend_user','users','cost','purpose','purpose_category','datetime',)
+        fields = ('expend_user','users','cost','purpose','purpose_category')
+
+    def __init__(self,*args,**kwargs):
+        super(ExpenseCreateForm,self).__init__(*args,**kwargs)
+        now = timezone.localtime(timezone.now())
+        minute = now.minute//30*30
+        hour = now.hour
+        self.initial['hour'] = hour
+        self.initial['minute'] = minute

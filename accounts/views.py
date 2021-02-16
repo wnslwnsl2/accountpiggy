@@ -20,6 +20,11 @@ def register_page(request):
     return render(request,'accounts/register.html',context)
 
 def login_page(request):
+    if 'next' in request.GET:
+        next = request.GET['next']
+    else:
+        next = '/'
+
     if request.method=='POST':
         form = forms.LoginForm(request.POST)
 
@@ -30,14 +35,16 @@ def login_page(request):
 
             if user is not None:
                 login(request,user)
-                return redirect('/')
+                return HttpResponseRedirect(next)
             else:
                 messages.info(request,'Username OR password is incorrect')
     else:
         form = forms.LoginForm()
 
-    context = {}
-    context['form'] = form
+    context = {
+        'form':form,
+        'next':next
+    }
     return render(request, 'accounts/login.html', context)
 
 def logout_page(request):

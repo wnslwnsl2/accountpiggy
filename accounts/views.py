@@ -7,15 +7,27 @@ from django.contrib import messages
 
 # Create your views here.
 def register_page(request):
+    if 'next' in request.GET:
+        next = request.GET['next']
+    else:
+        next = '/'
+
     if request.method == 'POST':
         form = CreateAccountForm(request.POST)
+
         if form.is_valid():
             form.save()
-            return redirect('/accounts/login')
+            user = authenticate(request, username=form.cleaned_data['email'], password=form.cleaned_data['password1'])
+            if user is not None:
+                login(request, user)
+                return redirect(next)
     else:
         form = CreateAccountForm()
 
-    context={'form':form}
+    context={
+        'form':form,
+        'next':next,
+    }
 
     return render(request,'accounts/register.html',context)
 

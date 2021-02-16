@@ -9,7 +9,7 @@
         {{form.email}}
         <label for="{{form.email.id_for_label}}" >{{form.password.label}}</label>
         {{form.password}}
-        <button type="submit" class="btn btn-dark">로그인</button>
+        <a class="btn btn-dark" href="{% url 'accounts:register' %}?next={{next}}">회원 가입</a><button type="submit" class="btn btn-dark">로그인</button>
         {% for message in messages %}
         <p id="messages">{{message}}</p>
         {% endfor %}

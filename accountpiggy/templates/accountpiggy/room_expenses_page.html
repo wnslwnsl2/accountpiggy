@@ -9,9 +9,6 @@
         <div class="col">
             <a class="btn btn-dark" role="button" href="{% url 'accountpiggy:room_expense_save_page' room.id %}">추가하기</a>
         </div>
-        <div class="col">
-            <a class="btn btn-dark" role="button" href="{% url 'accountpiggy:room_expense_cleanup_page' room.id %}">정산하기</a>
-        </div>
     </div>
 </div>
 {% if expense_exist %}

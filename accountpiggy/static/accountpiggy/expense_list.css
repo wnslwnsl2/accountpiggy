@@ -1,0 +1,44 @@
+.expense_list {
+    padding: 20px;
+}
+.expense-day {
+    background-color: #C6C6C6;
+    border : 1px solid gray;
+    margin : 0 0 0 0;
+}
+.expense {
+    margin : 0 0 0 0;
+    cursor : pointer;
+    text-align: center;
+    border: 1px solid black;
+    transition: 0.4s;
+    font-size: 19px;
+}
+.collapsed-expense-info{
+    display: none;
+    overflow: hidden;
+}
+
+.expenseSpendUser{
+}
+.expense-second-row{
+    height: 2.0rem;
+}
+.expense-time{
+    font-size:75%;
+}
+.expense-users{
+    font-size:75%;
+}
+.expensePurpose{
+    font-size:75%;
+}
+.expenseCost{
+    font-size:75%;
+}
+.expenseAdd{
+    width:30%
+}
+.expenseClean{
+    width:30%
+}

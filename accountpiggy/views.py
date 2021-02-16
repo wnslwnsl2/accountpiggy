@@ -295,10 +295,6 @@ def room_expense_cleanup_page(request,room_id):
 @login_required
 @membership_required
 def room_info_page(request,room_id):
-    """
-        TODO 사용자 - dummy 연결
-        TODO dummy 삭제하고나서 사이에 비어있는 index 채우는 것
-    """
     context = {}
     room = get_object_or_404(Room, id=room_id)
 

@@ -1,26 +1,16 @@
 {% load tz %}
 {% localtime on %}
-<div class="container">
+<div class="container expense_list">
     {% for expense_in_day in expense_in_day_list %}
     <div class="row expense-day">
         {{expense_in_day.date}}</br>
     </div>
     {% for expense in expense_in_day.expense_list %}
-    <div class="row expense">
+    <div class="row expense" id="expense_{{forloop.counter}}">
         <div class="col-2 expenseSpendUser">
             {{expense.expend_user.nickname}}
         </div>
         <div class="col-10">
-            <div class="row expense-first-row">
-                <div class="col-3 expense-time">
-                    {{expense.datetime|localtime|date:'H:i'}}
-                </div>
-                <div class="col-7 expense-users">
-                    {% for user in expense.users.all %}
-                    {{user.nickname}}
-                    {% endfor %}
-                </div>
-            </div>
             <div class="row expense-second-row">
                 <div class="col expensePurpose">
                     {{ expense.purpose }}
@@ -28,15 +18,46 @@
                 <div class="col expenseCost">
                     {{expense.cost}}원
                 </div>
-                <div class="col">
-                    {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
-                    <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}">수정</a><a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}">삭제</a>
-                    {% endif %}
-                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row collapsed-expense-info" id="collapsed-expense-info_{{forloop.counter}}">
+        <div class="col-3 expense-time">
+            {{expense.datetime|localtime|date:'H:i'}}
+        </div>
+        <div class="col-7 expense-users">
+            {% for user in expense.users.all %}
+            {{user.nickname}}
+            {% endfor %}
+        </div>
+
+        <div class="col">
+            {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
+            <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}">수정</a><a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}">삭제</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
     {% endfor %}
 </div>
 {% endlocaltime %}
+<script type="text/javascript">
+    var acc = document.getElementsByClassName("expense");
+    for(var i=0;i<acc.length;i++){
+        acc[i].addEventListener("click",function(){
+            /* Toggle between adding and removing the active class, */
+            this.classList.toggle("active");
+            var id_split_result = this.id.split("_");
+            var id = id_split_result[id_split_result.length-1];
+            var panel = document.getElementById(`collapsed-expense-info_${id}`);
+            if (panel.style.display==="block"){
+                panel.style.display="none";
+            }
+            else{
+                panel.style.display="block";
+            };
+        });
+    }
+
+</script>

@@ -1,30 +1,31 @@
 {% load tz %}
 {% localtime on %}
+<div class="container">
     {% for expense_in_day in expense_in_day_list %}
     <div class="row expense-day">
-        <p>{{expense_in_day.date}}</p>
+        <div class="col">
+            {{expense_in_day.date}}
+        </div>
     </div>
     {% for expense in expense_in_day.expense_list %}
-    <div class="expense list-group" id="expense_{{forloop.counter}}">
-        <div class="list-group-item list-group-item-action container">
-            <div class="row">
-                <div class="col-4 expenseSpendUser">
-                    {{expense.expend_user.nickname}}
-                </div>
-                <div class="col expensePurpose">
-                    {{ expense.purpose }}
-                </div>
-                <div class="col expenseCost">
-                    {{expense.cost}}원({{expense.number_of_participants}}명)
-                </div>
-            </div>
+    <div class="row expense" id="expense_{{forloop.counter}}">
+        <div class="col-2 expenseTime border">
+            {{expense.datetime|localtime|date:'H:i'}}
+        </div>
+        <div class="col-4 text-center text-nowrap text-truncate border">
+            {{expense.expend_user.nickname}}
+        </div>
+        <div class="col-3 text-center text-nowrap text-truncate border">
+            {{ expense.purpose }}
+        </div>
+        <div class="col-3 text-right border">
+            {{ expense.cost }}원({{expense.number_of_participants}}명)
         </div>
     </div>
 
-    <div class="container collapsed-expense-info" id="collapsed-expense-info_{{forloop.counter}}">
-        <div class="row">
-        <div class="col-4 expenseTime">
-            {{expense.datetime|localtime|date:'H:i'}}
+    <div class="row d-none d-flex collapsed-expense-info" id="collapsed-expense-info_{{forloop.counter}}">
+        <div class="col-3 small">
+            참여인원
         </div>
         <div class="col-5 expenseUsers">
             {% for user in expense.users.all %}
@@ -40,10 +41,10 @@
             <a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}"><i class="material-icons">delete</i></a>
         </div>
         {% endif %}
-        </div>
     </div>
     {% endfor %}
     {% endfor %}
+</div>
 {% endlocaltime %}
 <script type="text/javascript">
     var acc = document.getElementsByClassName("expense");
@@ -54,11 +55,12 @@
             var id_split_result = this.id.split("_");
             var id = id_split_result[id_split_result.length-1];
             var panel = document.getElementById(`collapsed-expense-info_${id}`);
-            if (panel.style.display==="block"){
-                panel.style.display="none";
+
+            if (panel.classList.contains("d-none")){
+                panel.classList.remove("d-none");
             }
             else{
-                panel.style.display="block";
+                panel.classList.add("d-none");
             };
         });
     }

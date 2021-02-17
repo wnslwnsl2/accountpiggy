@@ -1,34 +1,27 @@
-.expense_list {
-    padding: 20px;
-}
 .expense-day {
     background-color: #d4d4d4;
     border : 1px solid #c4c4c4;
     border-radius: 4px;
     margin : 0 0 0 0;
 }
-.expense-day p{
-    padding-left: 20px;
-    height: 12px;
+.expense {
+    width : 100%;
+    margin: auto;
+    border: 2px solid #6c757d;
+    border-radius: 4px;
+}
+.expenseTime {
+    font-size:14px
 }
 
-.collapsed-expense-info{
-    display: none;
+.expense.active {
+    background-color: #f8d7da;
+}
+
+.collapsed-expense-info {
+    width: 100%;
+    margin: auto;
+    border: 2px solid #dadada;
     overflow: hidden;
-}
-.expenseSpendUser,.expensePurpose,.expenseTime,.expenseUsers{
-    text-align: center;
-}
-.expenseCost{
-    text-align: right;
-}
-.expense-edit{
-    font-size:80%;
-}
-.expenseAdd{
-    width:100%;
-}
-.collapsed-expense-info{
-    border: 1px solid #dadada;
-    border-radius:4px;
+    border-radius: 4px;
 }

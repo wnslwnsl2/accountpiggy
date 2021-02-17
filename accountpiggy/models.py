@@ -262,7 +262,6 @@ class ExpenseMatrixEntry(models.Model):
     def __str__(self):
         return '{}가 {}한테 {}원'.format(self.sender,self.receiver,self.value)
 
-
 class ExpenseManager(models.Manager):
     # 변경사항을 저장하거나 새로 만든다
     def create_or_save(self,expense_id,form,room,indexed_user):
@@ -318,14 +317,13 @@ class Expense(models.Model):
     """
     지출 내역 모델
     """
-    purpose_categories=(
-        ('no', '선택안함'),
-        ('et', '기타'),
-        ('sl', '숙소'),
-        ('tr', '교통'),
+    purpose_categories=[
         ('fo', '식사'),
+        ('sl', '숙소'),
         ('dr', '(기호식품) ex)술/커피'),
-    )
+        ('tr', '교통'),
+        ('et', '기타'),
+    ]
     users = models.ManyToManyField(Member, related_name="participated_expense_set")
     expend_user = models.ForeignKey(Member, verbose_name='돈쓴자', related_name="expend_expense_set", on_delete=models.CASCADE)
     room = models.ForeignKey(Room,related_name="expense_set",on_delete=models.CASCADE)

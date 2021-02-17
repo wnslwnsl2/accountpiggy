@@ -290,6 +290,23 @@ def room_expense_cleanup_page(request,room_id):
     context['realexpense'] = sum_to_send + context['selfexpense']
 
     context['room'] = room
+
+    # 그래프 요소
+    foods = Expense.objects.filter(room=room,purpose_category='fo').all()
+    context['expense_food'] = sum([food.cost for food in foods])
+
+    sleeps = Expense.objects.filter(room=room,purpose_category='sl').all()
+    context['expense_sleep'] = sum([sleep.cost for sleep in sleeps])
+
+    drs = Expense.objects.filter(room=room,purpose_category='dr').all()
+    context['expense_drink'] = sum([dr.cost for dr in drs])
+
+    trs = Expense.objects.filter(room=room,purpose_category='tr').all()
+    context['expense_transfer'] = sum([tr.cost for tr in trs])
+
+    etcs = Expense.objects.filter(room=room,purpose_category='et').all()
+    context['expense_etc'] = sum([etc.cost for etc in etcs])
+
     return render(request, 'accountpiggy/room_expense_cleanup_page.html', context)
 
 """

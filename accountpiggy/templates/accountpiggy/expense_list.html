@@ -1,46 +1,49 @@
 {% load tz %}
 {% localtime on %}
-<div class="container expense_list">
     {% for expense_in_day in expense_in_day_list %}
     <div class="row expense-day">
-        {{expense_in_day.date}}</br>
+        <p>{{expense_in_day.date}}</p>
     </div>
     {% for expense in expense_in_day.expense_list %}
-    <div class="row expense" id="expense_{{forloop.counter}}">
-        <div class="col-2 expenseSpendUser">
-            {{expense.expend_user.nickname}}
-        </div>
-        <div class="col-10">
-            <div class="row expense-second-row">
+    <div class="expense list-group" id="expense_{{forloop.counter}}">
+        <div class="list-group-item list-group-item-action container">
+            <div class="row">
+                <div class="col-4 expenseSpendUser">
+                    {{expense.expend_user.nickname}}
+                </div>
                 <div class="col expensePurpose">
                     {{ expense.purpose }}
                 </div>
                 <div class="col expenseCost">
-                    {{expense.cost}}원
+                    {{expense.cost}}원({{expense.number_of_participants}}명)
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row collapsed-expense-info" id="collapsed-expense-info_{{forloop.counter}}">
-        <div class="col-3 expense-time">
+    <div class="container collapsed-expense-info" id="collapsed-expense-info_{{forloop.counter}}">
+        <div class="row">
+        <div class="col-4 expenseTime">
             {{expense.datetime|localtime|date:'H:i'}}
         </div>
-        <div class="col-7 expense-users">
+        <div class="col-5 expenseUsers">
             {% for user in expense.users.all %}
             {{user.nickname}}
             {% endfor %}
         </div>
 
-        <div class="col">
-            {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
-            <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}">수정</a><a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}">삭제</a>
-            {% endif %}
+        {% if indexed_user.is_admin and expense.expend_user.user.is_dummy or indexed_user.index == expense.expend_user.index %}
+        <div class="col-1 expense-edit">
+            <a href="{% url 'accountpiggy:room_expense_save_page' room.id %}?expense_id={{expense.id}}"><i class="material-icons">create</i></a>
+        </div>
+        <div class="col-1 expense-edit">
+            <a href="{% url 'accountpiggy:room_expense_delete' room.id %}?expense_id={{expense.id}}"><i class="material-icons">delete</i></a>
+        </div>
+        {% endif %}
         </div>
     </div>
     {% endfor %}
     {% endfor %}
-</div>
 {% endlocaltime %}
 <script type="text/javascript">
     var acc = document.getElementsByClassName("expense");

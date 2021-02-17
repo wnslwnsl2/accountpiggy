@@ -2,43 +2,33 @@
     padding: 20px;
 }
 .expense-day {
-    background-color: #C6C6C6;
-    border : 1px solid gray;
+    background-color: #d4d4d4;
+    border : 1px solid #c4c4c4;
+    border-radius: 4px;
     margin : 0 0 0 0;
 }
-.expense {
-    margin : 0 0 0 0;
-    cursor : pointer;
-    text-align: center;
-    border: 1px solid black;
-    transition: 0.4s;
-    font-size: 19px;
+.expense-day p{
+    padding-left: 20px;
+    height: 12px;
 }
+
 .collapsed-expense-info{
     display: none;
     overflow: hidden;
 }
-
-.expenseSpendUser{
-}
-.expense-second-row{
-    height: 2.0rem;
-}
-.expense-time{
-    font-size:75%;
-}
-.expense-users{
-    font-size:75%;
-}
-.expensePurpose{
-    font-size:75%;
+.expenseSpendUser,.expensePurpose,.expenseTime,.expenseUsers{
+    text-align: center;
 }
 .expenseCost{
-    font-size:75%;
+    text-align: right;
+}
+.expense-edit{
+    font-size:80%;
 }
 .expenseAdd{
-    width:30%
+    width:100%;
 }
-.expenseClean{
-    width:30%
+.collapsed-expense-info{
+    border: 1px solid #dadada;
+    border-radius:4px;
 }

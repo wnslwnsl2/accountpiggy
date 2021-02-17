@@ -328,6 +328,9 @@ class Expense(models.Model):
     def __str__(self):
         return self.purpose
 
+    def number_of_participants(self):
+        return len(self.users.all())
+
 class EnteringQA(models.Model):
     Q = models.CharField(verbose_name="질문",max_length=10,default='요이')
     A = models.CharField(verbose_name="답변",max_length=10,default='탱구리')

@@ -331,6 +331,9 @@ class Expense(models.Model):
     def number_of_participants(self):
         return len(self.users.all())
 
+    def divided_cost(self):
+        return self.cost//self.number_of_participants()
+
 class EnteringQA(models.Model):
     Q = models.CharField(verbose_name="질문",max_length=10,default='요이')
     A = models.CharField(verbose_name="답변",max_length=10,default='탱구리')

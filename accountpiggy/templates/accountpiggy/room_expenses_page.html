@@ -7,13 +7,9 @@
 {% endblock %}
 {% block header %}지출내역{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <a class="btn btn-dark" role="button" href="{% url 'accountpiggy:room_expense_save_page' room.id %}">추가하기</a>
-        </div>
-    </div>
-</div>
+    <a class="btn btn-outline-dark" id="expenseAdd" href="{% url 'accountpiggy:room_expense_save_page' room.id %}">
+        <span>추가하기</span><i class="material-icons">add</i>
+    </a>
 {% if expense_exist %}
     {% include 'accountpiggy/expense_list.html' %}
 {% else %}

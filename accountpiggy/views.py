@@ -250,39 +250,46 @@ def room_expense_delete(request,room_id):
 @login_required
 @membership_required
 def room_expense_cleanup_page(request,room_id):
-    """
-        TODO 정산이 필요할 때만 정산을 진행하도록 변경
-        TODO CleanedPageUserSelectForm은 GET으로 받아오는게 좋다.
-        TODO 보냈다 받았다 기능
-    """
     context = {}
     room = get_object_or_404(Room, id=room_id)
 
-    if request.method == "POST":
-        form = CleanedPageUserSelectForm(request.POST)
-        if form.is_valid():
-            matrix = room.expensematrix
-            matrix.cleanup(room) # 정산 알고리즘 실행
+    matrix = room.matrix
+    matrix.cleanup(room)  # 정산 알고리즘 실행
 
-            indexedUser = form.cleaned_data['selectedUser']
+    indexedUser = Member.objects.get(user=request.user,room=room)
 
-            context['send_item_list'] = matrix.send_item_list(indexedUser)
-            context['recv_item_list'] = matrix.recv_item_list(indexedUser)
-            context['selfexpense'] = matrix.self_expense(indexedUser)
-            totalexpense = realexpense = 0
+    context['send_item_list'] = matrix.get_send_item_list(indexedUser)
+    context['recv_item_list'] = matrix.get_recv_item_list(indexedUser)
+    context['selfexpense'] = matrix.get_self_expense(indexedUser)
+    total_members_expense = matrix.get_total_members_expense()
 
-            for entry in context['send_item_list']:
-                realexpense += entry.value
-            for entry in context['recv_item_list']:
-                totalexpense += entry.value
-            context['totalexpense'] = totalexpense + context['selfexpense']
-            context['realexpense'] = realexpense + context['selfexpense']
+    now_date = timezone.localtime(timezone.now()).date()
+
+    if now_date<room.start_date:
+        current_travel_days = -1
+    elif now_date>room.end_date:
+        current_travel_days = (room.end_date-room.start_date).days+1
     else:
-        form = CleanedPageUserSelectForm()
+        current_travel_days = (now_date-room.start_date).days+1
 
-    form.fields['selectedUser'].queryset = Member.objects.filter(room=room)
+
+    context['total_members_expense'] = total_members_expense
+    context['current_travel_days'] = current_travel_days
+    context['total_members_daily_expense'] =total_members_expense//current_travel_days
+
+    totalexpense = realexpense = 0
+    sum_to_send = sum_to_recv = 0
+
+    for entry in context['send_item_list']:
+        sum_to_send += entry.value
+
+    for entry in context['recv_item_list']:
+        sum_to_recv += entry.value
+
+    context['totalexpense'] = sum_to_recv + context['selfexpense']
+    context['realexpense'] = sum_to_send + context['selfexpense']
+
     context['room'] = room
-    context['form'] = form
     return render(request, 'accountpiggy/room_expense_cleanup_page.html', context)
 
 """

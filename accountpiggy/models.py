@@ -169,60 +169,63 @@ Matrix
 방마다 정산 메트릴스를 onetoone으로 갖는다.
 """
 class ExpenseMatrix(models.Model):
-    room = models.OneToOneField(Room,on_delete=models.CASCADE)
-
+    room = models.OneToOneField(Room,related_name="matrix",on_delete=models.CASCADE)
+    needed_to_clean_up = models.BooleanField(default=True)
     """
         cleanup
         =======
         :정산을 진행한다.
     """
     def cleanup(self,room):
-        # 1) 모든 matrix를 초기화 한다.
-        ExpenseMatrixEntry.objects.filter(matrix=self).delete()
+        if self.needed_to_clean_up:
+            # 1) 모든 matrix를 초기화 한다.
+            ExpenseMatrixEntry.objects.filter(matrix=self).delete()
 
-        # 2) 초기 entry 데이터를 만든다.
-        # expenses > entry 데이터
-        expenses = Expense.objects.filter(room=room).all()
-        for expense in expenses:
-            self.set_expense(expense)
+            # 2) 초기 entry 데이터를 만든다.
+            # expenses > entry 데이터
+            expenses = Expense.objects.filter(room=room).all()
+            for expense in expenses:
+                self.__set_expense(expense)
 
-        # 3) entry - matrix mapper를 만든다.
-        users=Member.objects.filter(room=room).all()
-        all_expense_entries = ExpenseMatrixEntry.objects.filter(matrix=self,is_cleaned_data=False).all()
-        mapper = UserMatrixMapper(users,all_expense_entries)
-        mat = mapper.get_initial_matrix()
-        mapper.printMat(mat)
+            # 3) entry - matrix mapper를 만든다.
+            users=Member.objects.filter(room=room).all()
+            all_expense_entries = ExpenseMatrixEntry.objects.filter(matrix=self,is_cleaned_data=False).all()
+            mapper = UserMatrixMapper(users,all_expense_entries)
+            mat = mapper.get_initial_matrix()
+            mapper.printMat(mat)
 
-        # 4) 알고리즘을 돌린다.
-        mat_cleaner = expense_matrix_cleaner.ExpenseMatrixCleaner(mat)
-        cleaned_mat = mat_cleaner.get_cleaned_matrix()
+            # 4) 알고리즘을 돌린다.
+            mat_cleaner = expense_matrix_cleaner.ExpenseMatrixCleaner(mat)
+            cleaned_mat = mat_cleaner.get_cleaned_matrix()
 
-        # 5) 정산된 행렬로 다시 Entry를 만들어 준다.
-        mapper.save_cleaned_entries(self,cleaned_mat)
-        mapper.printMat(cleaned_mat)
+            # 5) 정산된 행렬로 다시 Entry를 만들어 준다.
+            mapper.save_cleaned_entries(self,cleaned_mat)
+            mapper.printMat(cleaned_mat)
+            self.needed_to_clean_up = False
+            self.save()
 
     """
         expense로 Entry를 만든다.
     """
-    def set_expense(self,expense):
+    def __set_expense(self,expense):
         nbbangNumber = len(expense.users.all())
         for sender in expense.users.all():
             entry,dummy = ExpenseMatrixEntry.objects.get_or_create(matrix=self,sender=sender,receiver=expense.expend_user,is_cleaned_data=False)
             entry.value += expense.cost//nbbangNumber
             entry.save()
 
-    def send_item_list(self,user):
+    def get_send_item_list(self,user):
         return ExpenseMatrixEntry.objects.filter(
             matrix=self,
             sender=user,
             is_cleaned_data=True,).exclude(receiver=user).all()
 
-    def recv_item_list(self,user):
+    def get_recv_item_list(self,user):
         return ExpenseMatrixEntry.objects.filter(
             matrix=self,
             receiver=user,
             is_cleaned_data=True,).exclude(sender=user).all()
-    def self_expense(self,user):
+    def get_self_expense(self,user):
         try:
             entry = ExpenseMatrixEntry.objects.get(
                 matrix=self,
@@ -233,7 +236,15 @@ class ExpenseMatrix(models.Model):
             return entry.value
         except:
             return 0
+    def get_total_members_expense(self):
+        all_entries = ExpenseMatrixEntry.objects.filter(matrix=self,is_cleaned_data=True).all()
+        if len(all_entries) == 0:
+            return 0
 
+        ret = 0
+        for entry in all_entries:
+            ret += entry.value
+        return ret
 
 class ExpenseMatrixEntry(models.Model):
     """
@@ -284,7 +295,8 @@ class ExpenseManager(models.Manager):
             )
             expense.users.set(form.cleaned_data['users'].all())
         expense.save()
-
+        room.matrix.needed_to_clean_up = True
+        room.matrix.save()
         return expense
 
 

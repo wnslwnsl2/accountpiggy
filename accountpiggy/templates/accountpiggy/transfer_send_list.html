@@ -1,0 +1,11 @@
+{% if send_item_list %}
+{% for send_item in send_item_list %}
+<li>
+    <input type="hidden" name="entry_id" value="{{send_item.id}}">
+    <span>{{ send_item.receiver.nickname }} {{ send_item.value }}원</span>
+    <a class="btn btn-outline-dark button_send state{{send_item.state}}" href="{% url 'accountpiggy:transfer_sender_communication' room.id %}">
+        보냈다.
+    </a>{{send_item.state}}
+</li>
+{% endfor %}
+{% endif %}

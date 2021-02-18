@@ -8,6 +8,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.utils import timezone
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 def test(request):
     return render(request,'accountpiggy/test.html')
@@ -396,3 +397,21 @@ def room_member_delete(request,room_id):
         )
         user.delete()
         return HttpResponseRedirect(reverse('accountpiggy:room_info_page',kwargs={'room_id':room_id}))
+
+@csrf_exempt
+def transfer_receiver_communication(request):
+    entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
+    if entry.state != 3:
+        entry.state = 3
+        entry.save()
+    entry.save()
+    return HttpResponse(entry.state)
+
+@csrf_exempt
+def transfer_sender_communication(request):
+    entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
+
+    if entry.state == 0 or entry.state == 2:
+        entry.state = 1
+        entry.save()
+    return HttpResponse(entry.state)

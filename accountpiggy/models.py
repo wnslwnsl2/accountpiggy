@@ -257,6 +257,11 @@ class ExpenseMatrixEntry(models.Model):
     sender = models.ForeignKey(Member, verbose_name='보내야 하는 사람', on_delete=models.CASCADE, related_name='senders')
     receiver = models.ForeignKey(Member, verbose_name='받을 사람', on_delete=models.CASCADE, related_name='receivers')
     value = models.IntegerField(verbose_name='금액',default=0,validators=[MinValueValidator(0)])
+    # 0: none
+    # 1: sender_act
+    # 2: check_again
+    # 3: end
+    state = models.IntegerField(verbose_name='정산 상태',default=0)
     is_cleaned_data = models.BooleanField(default=False)
 
     def __str__(self):

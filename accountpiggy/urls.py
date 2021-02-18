@@ -21,8 +21,8 @@ urlpatterns = [
     path('room/expense/save/<int:room_id>/', views.room_expense_save_page, name='room_expense_save_page'),
     path('room/expense/delete/<int:room_id>/', views.room_expense_delete, name='room_expense_delete'),
 
-    path('room/expense/transfer_receiver_communication/',views.transfer_receiver_communication,name='transfer_receiver_communication'),
-    path('room/expense/transfer_sender_communication/', views.transfer_sender_communication, name='transfer_sender_communication'),
+    path('room/expense/transfer_receiver_communication/<int:room_id>/',views.transfer_receiver_communication,name='transfer_receiver_communication'),
+    path('room/expense/transfer_sender_communication/<int:room_id>/', views.transfer_sender_communication, name='transfer_sender_communication'),
 
     # room_admin_member
     path('room/member/edit/<int:room_id>/', views.room_member_edit, name='room_member_edit'),

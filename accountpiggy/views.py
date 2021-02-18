@@ -278,7 +278,6 @@ def room_expense_cleanup_page(request,room_id):
     context['current_travel_days'] = current_travel_days
     context['total_members_daily_expense'] =total_members_expense//current_travel_days
 
-    totalexpense = realexpense = 0
     sum_to_send = sum_to_recv = 0
 
     for entry in context['send_item_list']:
@@ -399,7 +398,8 @@ def room_member_delete(request,room_id):
         return HttpResponseRedirect(reverse('accountpiggy:room_info_page',kwargs={'room_id':room_id}))
 
 @csrf_exempt
-def transfer_receiver_communication(request):
+@membership_required
+def transfer_receiver_communication(request,room_id):
     entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
     if entry.state != 3:
         entry.state = 3
@@ -408,7 +408,8 @@ def transfer_receiver_communication(request):
     return HttpResponse(entry.state)
 
 @csrf_exempt
-def transfer_sender_communication(request):
+@membership_required
+def transfer_sender_communication(request,room_id):
     entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
 
     if entry.state == 0 or entry.state == 2:

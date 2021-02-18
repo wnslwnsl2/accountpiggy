@@ -6,51 +6,7 @@
 {% block link %}
 {{block.super}}
 <link rel="stylesheet" type="text/css" href="{% static 'accountpiggy/room_expense_cleanup.css' %}" >
-<script>
-$(document).ready(function(){
-    $('.button_recv').click(function () {
-        var div = $(this).parent();
-        var entry_id = div.find('input')[0].value;
-
-        var data = {
-            entry_id:entry_id
-        };
-        var url = $(this).attr('href');
-        $.ajax({
-            type:'POST',
-            url:url,
-            data:data,
-            success: function(state){
-                console.log(state)
-            },
-            dataType:'ints'
-        });
-        return false;
-    });
-
-    $('.button_send').click(function () {
-        var div = $(this).parent();
-        var entry_id = div.find('input')[0].value;
-        console.log(entry_id);
-
-        var data = {
-            entry_id:entry_id,
-        };
-
-        var url = $(this).attr('href');
-        $.ajax({
-            type:'POST',
-            url:url,
-            data:data,
-            success: function(state){
-                console.log(state)
-            },
-            dataType:'ints'
-        });
-        return false;
-    });
-});
-</script>
+<script type="text/javascript" src="{% static 'accountpiggy/transfer_list.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -85,47 +41,16 @@ $(document).ready(function(){
             개인 정산
         </div>
         <div class="col-12">
-            총 사용한 금액:{{totalexpense}}원
+            여행 경비:{{realexpense}}원
         </div>
-        <div class="col-12">
-            실질 경비:{{realexpense}}원
-        </div>
-        <div class="col">
-            <div id="self_expense_canvas"></div>
-        </div>
-        {% if recv_item_list %}
         <div class="col-12">
             받을 것
         </div>
-        {% for recv_item in recv_item_list %}
-        <div class="col-8">
-            {{ recv_item.sender.nickname }} {{recv_item.value}}원
-        </div>
-        <div class="col-4">
-            <input type="hidden" name="entry_id" value="{{recv_item.id}}">
-            <a href="{% url 'accountpiggy:transfer_receiver_communication' %}" class="btn btn-outline-dark button_recv">
-                받았다.
-            </a>{{recv_item.state}}
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        {% if send_item_list %}
+        {% include 'accountpiggy/transfer_recv_list.html' %}
         <div class="col-12">
             보낼 것
         </div>
-        {% for send_item in send_item_list %}
-        <div class="col-8">
-            {{ send_item.receiver.nickname }} {{ send_item.value }}원
-        </div>
-        <div class="col-4">
-            <input type="hidden" name="entry_id" value="{{send_item.id}}">
-            <a href="{% url 'accountpiggy:transfer_sender_communication' %}" class="btn btn-outline-dark button_send">
-                보냈다.
-            </a>{{send_item.state}}
-        </div>
-        {% endfor %}
-        {% endif %}
+        {% include 'accountpiggy/transfer_send_list.html' %}
     </div>
 </div>
 </br>

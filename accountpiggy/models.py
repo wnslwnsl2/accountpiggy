@@ -25,7 +25,7 @@ class RoomManager(models.Manager):
 
             coder = code_generater.CodeGenerator()
             q,a = coder.get_noun_noun_code()
-            qa = EnteringQA.objects.create(
+            EnteringQA.objects.create(
             Q=q,
             A=a,
             room=room,
@@ -89,6 +89,18 @@ class Room(models.Model):
                 is_admin=is_admin
             )
             member.save()
+
+    def str_start_date(self):
+        return '{}년{}월{}일'.format(
+            self.start_date.year,
+            self.start_date.month,
+            self.start_date.day)
+
+    def str_end_date(self):
+        return '{}년{}월{}일'.format(
+            self.end_date.year,
+            self.end_date.month,
+            self.end_date.day)
 """
 Member
 ======

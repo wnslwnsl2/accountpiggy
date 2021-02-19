@@ -2,24 +2,25 @@
 {% load static %}
 {% block title %}방 정보{% endblock %}
 {% block link %}
+
 {{block.super}}
-<link rel="stylesheet" href="{% static 'accountpiggy/room_info_page.css' %}?after">
 <script type="text/javascript" src="{% static 'accountpiggy/room_info.js' %}?after"></script>
+<link rel="stylesheet" href="{% static 'accountpiggy/room_info_page.css' %}?after">
 {% endblock %}
+
 {% block content %}
 
 <h3>{{room.name}}
-    <a id="settingRoom" href="{% url 'accountpiggy:room_create_page'%}">
-        <span class="material-icons">
-            settings
-        </span>
-    </a>
+    <input id="settingRoomURL" type="hidden" value="{% url 'accountpiggy:room_create_page'%}"/>
+    <span class="material-icons settingRoom">settings</span>
 </h3>
 
+{{room.str_start_date}} - {{room.str_end_date}}
+
+<h3>방코드</h3>
 <div class="container">
     <div class="row">
         <input id="shareURL" type="hidden" value="https://nbbanggogo.com{% url 'accountpiggy:room_info_page' room.id %}"/>
-        <div class="col-12">방코드</div>
         <div class="col" id="roomQ">{{roomQ}}</div>
         <div class="col" id="roomA">{{roomA}}</div>
         <div class="col">
@@ -65,7 +66,7 @@
             <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
                class="edit">
                 <span class="matrial-icons">
-                    face_retouching_off
+                    logout
                 </span>
             </a>
             {% endif %}

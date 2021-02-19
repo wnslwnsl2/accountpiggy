@@ -15,7 +15,24 @@ $(document).ready(function () {
         document.body.removeChild(tempElem);
     });
 
-    $(".settingRoom").click(function(){
-        
-    });
+    $(".settingRoom").click(createRoomNameInput);
 });
+
+function createRoomNameInput() {
+    var roomNameSpan = $(this).parent().find("span.roomName")
+    var roomName = roomNameSpan.text()
+    var roomNameInput = document.createElement("input");
+    roomNameInput.type = 'text';
+    roomNameInput.id = 'roomNameInput';
+    roomNameInput.value = roomName;
+    $(roomNameInput).css('width', '250px');
+    $(roomNameInput).focusout(function(){
+        var roomNameSpan = document.createElement("span");
+        $(roomNameSpan).addClass("roomName");
+        $(roomNameSpan).text($(this).val())
+        $(this).after(roomNameSpan);
+        $(this).remove();
+    });
+    roomNameSpan.after(roomNameInput);
+    roomNameSpan.remove();
+}

@@ -10,7 +10,8 @@
 
 {% block content %}
 
-<h3>{{room.name}}
+<h3>
+    <span class="roomName">{{room.name}}</span>
     <input id="settingRoomURL" type="hidden" value="{% url 'accountpiggy:room_create_page'%}"/>
     <span class="material-icons settingRoom">settings</span>
 </h3>

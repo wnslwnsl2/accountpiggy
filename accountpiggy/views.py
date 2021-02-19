@@ -457,3 +457,16 @@ def transfer_sender_communication(request,room_id):
         'recv_item_list':matrix.get_recv_item_list(indexedUser),
     }
     return render(request,'accountpiggy/transfer_list.html',context)
+
+@csrf_exempt
+def room_edit(request,room_id):
+    input_room_name = request.POST['roomName']
+    room = get_object_or_404(Room, id=room_id)
+
+    if len(input_room_name)>0 or len(input_room_name)<=30:
+        room = get_object_or_404(Room,id=room_id)
+        room.name = input_room_name
+        room.save()
+        return HttpResponse("<span class='roomName'>{}</span>".format(input_room_name))
+    else:
+        return HttpResponse("<span class='roomName'>{}</span>".format(room.name))

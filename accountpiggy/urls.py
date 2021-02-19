@@ -15,6 +15,7 @@ urlpatterns = [
     path('room/reception/<int:room_id>/',views.room_reception_page, name='room_reception_page'),
     path('room/info/<int:room_id>/', views.room_info_page, name='room_info_page'),
     path('room/expenses/<int:room_id>/', views.room_expenses_page, name='room_expenses_page'),
+    path('room/edit/<int:room_id>/',views.room_edit,name='room_edit'),
 
     # 방 지출내역 추가/삭제/정산
     path('room/expense/cleanup/<int:room_id>/', views.room_expense_cleanup_page, name='room_expense_cleanup_page'),

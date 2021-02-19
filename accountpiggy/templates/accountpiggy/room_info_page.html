@@ -11,9 +11,9 @@
 {% block content %}
 
 <h3>
+    <input id="settingRoomURL" type="hidden" value="{% url 'accountpiggy:room_edit' room.id %}"/>
     <span class="roomName">{{room.name}}</span>
-    <input id="settingRoomURL" type="hidden" value="{% url 'accountpiggy:room_create_page'%}"/>
-    <span class="material-icons settingRoom">settings</span>
+    <span class="material-icons settingRoom">mode</span>
 </h3>
 
 {{room.str_start_date}} - {{room.str_end_date}}

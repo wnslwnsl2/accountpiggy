@@ -5,28 +5,27 @@
 
 {% block link %}
 {{block.super}}
-<link rel="stylesheet" type="text/css" href="{% static 'accountpiggy/room_expense_cleanup.css' %}" >
-<script type="text/javascript" src="{% static 'accountpiggy/transfer_list.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'accountpiggy/room_expense_cleanup.css' %}?after">
+<script type="text/javascript" src="{% static 'accountpiggy/transfer_list.js' %}?after"></script>
 {% endblock %}
 
 {% block content %}
-<hr/>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 sectionTitle1">
             여행 정산
         </div>
-        <div class="col-4">
+        <div class="col-4 text-left">
             총 지출 금액
         </div>
-        <div class="col-8">
+        <div class="col-8 text-center">
             {{total_members_expense}}원
         </div>
         {% if current_travel_days > 1 %}
-        <div class="col-4">
+        <div class="col-4 text-left">
             일별 지출 금액 {{current_travel_days}}일 차
         </div>
-        <div class="col-8">
+        <div class="col-8 text-center">
             {{total_members_daily_expense}}원
         </div>
         {% endif %}
@@ -37,20 +36,18 @@
 <hr/>
 <div class="container">
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 sectionTitle1">
             개인 정산
         </div>
-        <div class="col-12">
-            여행 경비:{{realexpense}}원
+        <div class="col-4 text-left">
+            여행 경비
         </div>
-        <div class="col-12">
-            받을 것
+        <div class="col-8 text-center">
+            {{realexpense}}원
         </div>
-        {% include 'accountpiggy/transfer_recv_list.html' %}
-        <div class="col-12">
-            보낼 것
-        </div>
-        {% include 'accountpiggy/transfer_send_list.html' %}
+    </div>
+    <div class="row accountTransferList">
+    {% include 'accountpiggy/transfer_list.html' %}
     </div>
 </div>
 </br>

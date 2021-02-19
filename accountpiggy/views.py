@@ -240,6 +240,8 @@ def room_expense_delete(request,room_id):
     room = Room.objects.get(id=room_id)
     expense = Expense.objects.get(id=request.GET['expense_id'])
     expense.delete()
+    room.matrix.needed_to_clean_up = True
+    room.matrix.save()
     return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
 
 """
@@ -404,15 +406,33 @@ def transfer_receiver_communication(request,room_id):
     if entry.state != 3:
         entry.state = 3
         entry.save()
-    entry.save()
-    return HttpResponse(entry.state)
+
+    room = get_object_or_404(Room, id=room_id)
+    matrix = room.matrix
+    indexedUser = Member.objects.get(user=request.user,room=room)
+    context = {
+        'room':room,
+        'send_item_list':matrix.get_send_item_list(indexedUser),
+        'recv_item_list':matrix.get_recv_item_list(indexedUser),
+    }
+    return render(request,'accountpiggy/transfer_list.html',context)
 
 @csrf_exempt
 @membership_required
 def transfer_sender_communication(request,room_id):
+    print("hey")
     entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
 
     if entry.state == 0 or entry.state == 2:
         entry.state = 1
         entry.save()
-    return HttpResponse(entry.state)
+
+    room = get_object_or_404(Room, id=room_id)
+    matrix = room.matrix
+    indexedUser = Member.objects.get(user=request.user,room=room)
+    context = {
+        'room':room,
+        'send_item_list':matrix.get_send_item_list(indexedUser),
+        'recv_item_list':matrix.get_recv_item_list(indexedUser),
+    }
+    return render(request,'accountpiggy/transfer_list.html',context)

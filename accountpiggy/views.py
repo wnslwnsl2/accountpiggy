@@ -43,15 +43,33 @@ def main_page(request):
 """
 @login_required
 def room_create_page(request):
-    form = RoomCreateForm()
+    ajax = 'ajax' in request.GET
+
+    if 'room_id' in request.GET:
+        room_id = request.GET['room_id']
+    else:
+        room_id = -1
+
     if request.method == "POST":
         form = RoomCreateForm(request.POST)
+
         if form.is_valid():
-            room = Room.objects.create_room(form,request.user)
-            return HttpResponseRedirect(reverse(viewname="accountpiggy:room_reception_page",kwargs={'room_id':room.id}))
+            room = Room.objects.save_or_create(form,request.user,room_id)
+            if ajax:
+                return ""
+            else:
+                return HttpResponseRedirect(
+                    reverse(viewname="accountpiggy:room_reception_page", kwargs={'room_id': room.id}))
+        else:
+            return form.errors
+    else:
+        if ajax:
+            form = RoomCreateForm(instance=Room.objects.get(id=room_id))
+        else:
+            form = RoomCreateForm()
+
     context = {'form': form}
     return render(request, 'accountpiggy/room_create_page.html', context)
-
 
 """
     방 찾기
@@ -392,11 +410,15 @@ def room_member_delete(request,room_id):
     context['room'] = room
 
     if request.method == "GET":
-        user = Member.objects.get(
+        member = Member.objects.get(
             room=room,
             index=request.GET['index'],
         )
-        user.delete()
+        if member.user.is_dummy():
+            member.delete()
+        else:
+            member.user = User.dummy.all()
+            member.save()
         return HttpResponseRedirect(reverse('accountpiggy:room_info_page',kwargs={'room_id':room_id}))
 
 @csrf_exempt
@@ -420,7 +442,6 @@ def transfer_receiver_communication(request,room_id):
 @csrf_exempt
 @membership_required
 def transfer_sender_communication(request,room_id):
-    print("hey")
     entry = ExpenseMatrixEntry.objects.get(id=request.POST['entry_id'])
 
     if entry.state == 0 or entry.state == 2:

@@ -7,22 +7,29 @@ from django.utils import timezone
 
 
 class RoomManager(models.Manager):
-    def create_room(self,form,admin_user):
-        room = self.create(
-            name = form.cleaned_data['name'],
-            start_date = form.cleaned_data['start_date'],
-            end_date = form.cleaned_data['end_date'],
-        )
-        room.accept_user(admin_user,True)
-        ExpenseMatrix.objects.create(room=room)
+    def save_or_creates(self,form,admin_user,room_id):
+        if Room.objects.get(id=room_id).exists():
+            room = Room.objects.get(id=room_id).exists()
+            room.name = form.cleaned_data['name']
+            room.name = form.cleaned_data['name']
+            room.name = form.cleaned_data['name']
+            room.name = form.cleaned_data['name']
+        else:
+            room = self.create(
+                name = form.cleaned_data['name'],
+                start_date = form.cleaned_data['start_date'],
+                end_date = form.cleaned_data['end_date'],
+            )
+            room.accept_user(admin_user,True)
+            ExpenseMatrix.objects.create(room=room)
 
-        coder = code_generater.CodeGenerator()
-        q,a = coder.get_noun_noun_code()
-        qa = EnteringQA.objects.create(
+            coder = code_generater.CodeGenerator()
+            q,a = coder.get_noun_noun_code()
+            qa = EnteringQA.objects.create(
             Q=q,
             A=a,
             room=room,
-        )
+            )
         return room
 """
 방

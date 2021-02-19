@@ -1,68 +1,93 @@
 {% extends 'accountpiggy/base_room_page.html' %}
+{% load static %}
 {% block title %}방 정보{% endblock %}
+{% block link %}
+{{block.super}}
+<link rel="stylesheet" href="{% static 'accountpiggy/room_info_page.css' %}?after">
+<script type="text/javascript" src="{% static 'accountpiggy/room_info.js' %}?after"></script>
+{% endblock %}
 {% block content %}
+
+<h3>{{room.name}}
+    <a id="settingRoom" href="{% url 'accountpiggy:room_create_page'%}">
+        <span class="material-icons">
+            settings
+        </span>
+    </a>
+</h3>
+
 <div class="container">
     <div class="row">
-        <div class="col">{{room.name}}</div>
-        <div class="col"><button class="btn btn-dark" id="btn-share-url">공유하기</button></div>
-    </div>
-    <div class="row">
-        <div class="col">암구호</div>
-        <div class="col">{{roomQ}}</div>
-        <div class="col">{{roomA}}</div>
-    </div>
-    <div class="row">
-        <div class="col-12">방참가자</div>
+        <input id="shareURL" type="hidden" value="https://nbbanggogo.com{% url 'accountpiggy:room_info_page' room.id %}"/>
+        <div class="col-12">방코드</div>
+        <div class="col" id="roomQ">{{roomQ}}</div>
+        <div class="col" id="roomA">{{roomA}}</div>
         <div class="col">
-            <ul class="list-group">
-                {% for user in users %}
-                <li class="list-group-item">
-                    {% if user.is_admin %}
-                    (방장)
-                    {% endif %}
-                    {% if indexed_user.index == user.index %}
-                    (나)
-                    {% endif %}
-                    ({{ user.index }}){{user.nickname}}({{ user.user.name }})
-
-                    {% if is_admin %}
-                        {% if user.user.is_dummy %}
-                            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">변경</a>
-                            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}" class="edit">삭제</a>
-                        {% elif not user.is_admin %}
-                            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}" class="edit">강퇴</a>
-                        {% endif %}
-                    {% endif %}
-                    {% if indexed_user.index == user.index %}
-                            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">변경</a>
-                    {% endif %}
-                </li>
-                {% endfor %}
-
-                {% if is_admin %}
-                <li class="list-group-item">
-                    <form method="post" action="{% url 'accountpiggy:room_info_page' room.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="adddummy"/>
-                        <input type="submit" value="더미추가"/>
-                    </form>
-                </li>
-                {% endif %}
-            </ul>
+            <button class="btn btn-dark" id="btn-share-url">공유</button>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-    document.querySelector("#btn-share-url").addEventListener("click",function(){
-        var tempElem = document.createElement('textarea');
-        tempElem.value=`[정산돼지]\n질문:{{roomQ}}\n답:{{roomA}}\n${"https://nbbanggogo.com"}{% url 'accountpiggy:room_info_page' room.id %}`;
-        document.body.appendChild(tempElem);
-        tempElem.select();
-        tempElem.setSelectionRange(0, 9999);
+<h2>방참가자</h2>
+<div class="container-fluid member_list">
+    {% for user in users %}
+    <div class="row userInfo">
+        <div class="col-1">
+            {% if user.is_admin %}
+            <span class="material-icons">
+                star
+            </span>
+            {% endif %}
+        </div>
 
-        document.execCommand("copy");
-        document.body.removeChild(tempElem);
-    });
-</script>
+        <div class="col-8">
+            {% if indexed_user.index == user.index %}
+                <span class="imUser">{{user.nickname}}({{ user.user.name }})</span>
+            {% else %}
+                {{user.nickname}}({{ user.user.name }})
+            {% endif %}
+        </div>
+        <div class="col-3">
+            {% if is_admin %}
+            {% if user.user.is_dummy %}
+            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">
+                <span class="material-icons">
+                mode
+                </span>
+            </a>
+            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
+               class="edit">
+                <span class="material-icons">
+                    cancel
+                </span>
+            </a>
+            {% elif not user.is_admin %}
+            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
+               class="edit">
+                <span class="matrial-icons">
+                    face_retouching_off
+                </span>
+            </a>
+            {% endif %}
+            {% endif %}
+            {% if indexed_user.index == user.index %}
+            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">
+                <span class="material-icons">
+                    mode
+                </span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if is_admin %}
+<form method="post" action="{% url 'accountpiggy:room_info_page' room.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="adddummy"/>
+    <button class="btn btn-outline-dark addDummy" type="submit">
+        더미만들기 <span class="material-icons">person_add_alt_1</span>
+    </button>
+</form>
+{% endif %}
 {% endblock %}

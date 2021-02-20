@@ -15,32 +15,31 @@ $(document).ready(function () {
         document.body.removeChild(tempElem);
     });
 
-    $(".settingRoom").click(setRoomName);
+    $(".inlineEditor").click(setRoomName);
 });
 
 function setRoomName() {
-    var roomNameSpan = $(this).parent().find("span.roomName")
-    var roomName = roomNameSpan.text()
-    var roomNameInput = document.createElement("input");
-    roomNameInput.type = 'text';
-    roomNameInput.id = 'roomNameInput';
-    roomNameInput.value = roomName;
-    $(roomNameInput).css('width', '250px');
-    $(roomNameInput).focusout(function(){
-        var roomName = $(this).val();
-        url = $(this).parent().find("#settingRoomURL").val();
+    var targetSpan = $(this).parent().find("span.editTarget")
+    var targetText = targetSpan.text()
+    var editTempInput = document.createElement("input");
+    editTempInput.type = 'text';
+    editTempInput.id = 'editTempInput';
+    editTempInput.value = targetText;
+    $(editTempInput).css('width', '250px');
+    targetSpan.after(editTempInput);
+    targetSpan.remove();
+
+    $(editTempInput).focusout(function(){
+        var targetText = $(this).val();
+        url = $(this).parent().find(".editTargetURL").val();
         console.log(url);
 
         data ={
-            roomName:roomName
+            targetText:targetText
         };
 
-        $.post(url,data,function(result){
-            var roomNameInput = $('#roomNameInput');
-            roomNameInput.after(result);
-            roomNameInput.remove();
-        })
+        $(this).parent().parent().load(url,data,function(){
+            $(".inlineEditor").click(setRoomName);
+        });
     });
-    roomNameSpan.after(roomNameInput);
-    roomNameSpan.remove();
 }

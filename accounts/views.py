@@ -4,6 +4,7 @@ from . import forms
 from django.contrib.auth import logout,login,authenticate
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from .models import Account
 
 # Create your views here.
 def register_page(request):
@@ -16,7 +17,14 @@ def register_page(request):
         form = CreateAccountForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            Account.objects.create(
+                bank=form.cleaned_data['bank'],
+                number=form.cleaned_data['account_number'],
+                user=user
+            )
+
             user = authenticate(request, username=form.cleaned_data['email'], password=form.cleaned_data['password1'])
             if user is not None:
                 login(request, user)

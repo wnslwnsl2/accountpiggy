@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accountpiggy',
     'accounts',
+    'imagekit',
 ]
 
 MIDDLEWARE = [
@@ -130,10 +131,14 @@ USE_TZ = True
 
 STATICFILES_DIRS=(
     os.path.join(BASE_DIR,'static'),
-    os.path.join(BASE_DIR,'accountpiggy/static')
+    os.path.join(BASE_DIR,'accountpiggy/static'),
 )
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'site/assets')
+
+MEDIA_ROOT = os.path.join(BASE_DIR,'site/media')
+MEDIA_URL = '/media/'
 
 LOGIN_URL = '/accounts/login/'
 

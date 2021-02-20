@@ -9,11 +9,9 @@
 {% endblock %}
 
 {% block content %}
-
 <h3>
-    <input id="settingRoomURL" type="hidden" value="{% url 'accountpiggy:room_edit' room.id %}"/>
-    <span class="roomName">{{room.name}}</span>
-    <span class="material-icons settingRoom">mode</span>
+    {% url 'accountpiggy:room_name_edit' room.id as targetURL %}
+    {% include "accountpiggy/inline_edit.html" with text=room.name is_editable=indexed_user.is_admin targetURL=targetURL%}
 </h3>
 
 {{room.str_start_date}} - {{room.str_end_date}}
@@ -48,15 +46,19 @@
             {% else %}
                 {{user.nickname}}({{ user.user.name }})
             {% endif %}
-        </div>
-        <div class="col-3">
-            {% if is_admin %}
-            {% if user.user.is_dummy %}
+
+            {% if user.user.is_dummy or indexed_user.index == user.index %}
             <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">
                 <span class="material-icons">
                 mode
                 </span>
             </a>
+            {% endif %}
+        </div>
+
+        <div class="col-3 text-right-please">
+            {% if is_admin %}
+            {% if user.user.is_dummy %}
             <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
                class="edit">
                 <span class="material-icons">
@@ -66,18 +68,11 @@
             {% elif not user.is_admin %}
             <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
                class="edit">
-                <span class="matrial-icons">
+                <span class="material-icons">
                     logout
                 </span>
             </a>
             {% endif %}
-            {% endif %}
-            {% if indexed_user.index == user.index %}
-            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">
-                <span class="material-icons">
-                    mode
-                </span>
-            </a>
             {% endif %}
         </div>
     </div>

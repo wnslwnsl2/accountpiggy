@@ -3,7 +3,7 @@
     받을 것
 </div>
 {% for recv_item in recv_item_list %}
-<div class="row">
+<div class="row transferItem">
     <div class="col-4 text-left">
         {{ recv_item.sender.nickname }}
     </div>
@@ -30,7 +30,10 @@
     보낼 것
 </div>
 {% for send_item in send_item_list %}
-<div class="row">
+<div class="row transferItem">
+    <div class="col-12">
+        {{ send_item.receiver.user.account.bank }} {{ send_item.receiver.user.account.number }}
+    </div>
     <div class="col-4 text-left">
         {{ send_item.receiver.nickname }}
     </div>

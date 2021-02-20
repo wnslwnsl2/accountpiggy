@@ -1,3 +1,8 @@
+.transferItem {
+    margin: 0 auto;
+    border-bottom: 2px solid gray !important;
+}
+
 .button_recv.state0{
     background-color: transparent !important;
 }

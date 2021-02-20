@@ -11,20 +11,25 @@
 {% endif %}
 {% endblock %}
 
+{% block link %}
+<link rel="stylesheet" href="accountpiggy/main.css"/>
+<style>
+    .room-button{
+        width:100%;
+        margin: 10px 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 {% if user.is_authenticated %}
-<div class="container">
-    <div class="d-flex justify-content-center">
-        <div class="col">
-            <a href="{% url 'accountpiggy:room_create_page' %}" class="btn btn-dark room-button" role="button">만들기</a>
-        </div>
-        <div class="col">
-            <a href="{% url 'accountpiggy:room_search_page' %}" class="btn btn-dark room-button" role="button">찾기</a>
-        </div>
-    </div>
-    <div class="row">
-        {% include 'accountpiggy/room_list.html' %}
-    </div>
-</div>
+<a class="btn btn-outline-dark room-button" href="{% url 'accountpiggy:room_create_page' %}" role="button">
+    만들기+
+</a>
+
+<h4>방리스트</h4>
+
+{% include 'accountpiggy/room_list.html' %}
+
 {% endif %}
 {% endblock %}

@@ -1,0 +1,8 @@
+<!--text,is_editable,targetURL-->
+<div>
+    <span class="editTarget">{{text}}</span>
+    {% if is_editable %}
+    <input class="editTargetURL" type="hidden" value="{{targetURL}}"/>
+    <span class="material-icons inlineEditor">mode</span>
+    {% endif %}
+</div>

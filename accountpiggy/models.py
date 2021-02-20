@@ -7,13 +7,12 @@ from django.utils import timezone
 
 
 class RoomManager(models.Manager):
-    def save_or_creates(self,form,admin_user,room_id):
-        if Room.objects.get(id=room_id).exists():
+    def save_or_create(self,form,admin_user,room_id):
+        if Room.objects.filter(id=room_id).exists():
             room = Room.objects.get(id=room_id).exists()
             room.name = form.cleaned_data['name']
-            room.name = form.cleaned_data['name']
-            room.name = form.cleaned_data['name']
-            room.name = form.cleaned_data['name']
+            room.start_date = form.cleaned_data['start_date']
+            room.end_date = form.cleaned_data['end_date']
         else:
             room = self.create(
                 name = form.cleaned_data['name'],

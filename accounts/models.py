@@ -95,3 +95,9 @@ class User(AbstractBaseUser):
     def rooms(self):
         member_set = self.member_set
         return [member.room for member in member_set.all()]
+
+
+class Account(models.Model):
+    bank = models.CharField(verbose_name="은행",max_length=20)
+    number = models.CharField(verbose_name="계좌번호",max_length=30)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)

@@ -1,5 +1,6 @@
+import re
 from django import forms
-from .models import User
+from .models import User,Account
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 class LoginForm(forms.Form):
@@ -41,6 +42,24 @@ class CreateAccountForm(forms.ModelForm):
             }
         )
     )
+    bank = forms.CharField(
+        label="은행",
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control',
+                'placeholder':'은행',
+            }
+        )
+    )
+    account_number = forms.CharField(
+        label="계좌번호",
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control',
+                'placeholder':'계좌번호',
+            }
+        )
+    )
 
     class Meta:
         model = User
@@ -71,6 +90,13 @@ class CreateAccountForm(forms.ModelForm):
             raise forms.ValidationError("비밀번호가 일치 하지 않습니다.")
 
         return password2
+
+    # def clean_account_number(self):
+    #     account_number = self.cleaned_data['account_number']
+    #     if not re.search(r'^(\d{1,})(-(\d{1,})){1,}$',account_number):
+    #         raise forms.ValidationError("계좌번호를 다시 입력해 주세요")
+    #     return account_number
+
 
     def save(self,commit=True):
         user = super().save(commit=False)

@@ -459,14 +459,21 @@ def transfer_sender_communication(request,room_id):
     return render(request,'accountpiggy/transfer_list.html',context)
 
 @csrf_exempt
-def room_edit(request,room_id):
-    input_room_name = request.POST['roomName']
+def room_name_edit(request,room_id):
+    input_room_name = request.POST['targetText']
     room = get_object_or_404(Room, id=room_id)
 
     if len(input_room_name)>0 or len(input_room_name)<=30:
         room = get_object_or_404(Room,id=room_id)
         room.name = input_room_name
         room.save()
-        return HttpResponse("<span class='roomName'>{}</span>".format(input_room_name))
+        ret = input_room_name
     else:
-        return HttpResponse("<span class='roomName'>{}</span>".format(room.name))
+        ret = room.name
+
+    context={
+        'text':ret,
+        'is_editable':True,
+        'targetURL':reverse('accountpiggy:room_name_edit',kwargs={'room_id':room_id})
+    }
+    return render(request,'accountpiggy/inline_edit.html',context)

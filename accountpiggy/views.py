@@ -343,7 +343,8 @@ def room_info_page(request,room_id):
     room = get_object_or_404(Room, id=room_id)
 
     if request.method == "POST" and 'adddummy' in request.POST:
-        Member.objects.create(room=room, user=User.dummy.all(), index=room.get_next_index(), is_admin=False)
+        dummy = User.dummy.all();
+        Member.objects.create(room=room, user=dummy,nickname="이름을설정해주세요" ,index=room.get_next_index(), is_admin=False)
 
     indexed_user = Member.objects.get(user=request.user, room=room)
 

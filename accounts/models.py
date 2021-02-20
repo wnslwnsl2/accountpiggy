@@ -40,7 +40,7 @@ user.dummy 로 접근 할 수 있도록 하는 Manager
 """
 class DummyManager(models.Manager):
     dummyemail = 'dummydummy@dummydummy.dummy'
-    dummyname = 'dummy'
+    dummyname = '임시'
 
     def get_queryset(self):
         try:
@@ -50,7 +50,7 @@ class DummyManager(models.Manager):
             )
             user.save(using=self._db)
         except:
-            user = User.objects.get(email=self.dummyemail,name=self.dummyname)
+            user = User.objects.get(email=self.dummyemail)
         return user
 
 

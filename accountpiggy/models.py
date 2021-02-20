@@ -83,6 +83,7 @@ class Room(models.Model):
         if not Member.objects.filter(room=self,user=user).exists():
             member = Member.objects.create(
                 user=user,
+                nickname=user.name,
                 room=self,
                 index=self.get_next_index(),
                 is_admin=is_admin

@@ -1,35 +1,10 @@
 import datetime
-from . import code_generater
 from expense_matrix_cleaner import expense_matrix_cleaner
 from django.db import models
 from django.core.validators import MinValueValidator,MaxValueValidator
 from django.utils import timezone
+import random
 
-
-class RoomManager(models.Manager):
-    def save_or_create(self,form,admin_user,room_id):
-        if Room.objects.filter(id=room_id).exists():
-            room = Room.objects.get(id=room_id).exists()
-            room.name = form.cleaned_data['name']
-            room.start_date = form.cleaned_data['start_date']
-            room.end_date = form.cleaned_data['end_date']
-        else:
-            room = self.create(
-                name = form.cleaned_data['name'],
-                start_date = form.cleaned_data['start_date'],
-                end_date = form.cleaned_data['end_date'],
-            )
-            room.accept_user(admin_user,True)
-            ExpenseMatrix.objects.create(room=room)
-
-            coder = code_generater.CodeGenerator()
-            q,a = coder.get_noun_noun_code()
-            EnteringQA.objects.create(
-            Q=q,
-            A=a,
-            room=room,
-            )
-        return room
 """
 방
 =
@@ -48,39 +23,14 @@ class Room(models.Model):
     start_date = models.DateField(verbose_name='여행시작날짜')
     end_date = models.DateField(verbose_name='여행종료 날짜',null=True,blank=True)
 
-    objects = RoomManager()
     def __str__(self):
         return self.name
 
     def get_description(self):
         return '{}'.format(self.name)
 
-    """
-        get_next_index
-        ==============
-        user는 방에서 개개인이 index 번호를 부여받는다.
-        유저가 새로 방에 참가 할 때, 부여 받아야 하는 index를 확인해서 돌려준다.
-    """
-    def get_next_index(self):
-        indexed_Users = self.users.all()
-        # 빈거 확인하는 알고리즘
-        # 1) 전체 어레이 만들고 sort
-        if len(indexed_Users)==0:
-            return 0
-        if len(indexed_Users)==1:
-            return 1
-
-        index_array = sorted([indexed_user.index for indexed_user in indexed_Users])
-        stack = []
-
-        for i in range(len(index_array)-1):
-            stack.append(index_array[i])
-            if stack[-1]!=index_array[i+1]-1:
-                return stack[-1]+1
-        return len(indexed_Users)
-
-    def accept_user(self,user,is_admin):
-        if not Member.objects.filter(room=self,user=user).exists():
+    def accept_user(self,user,is_admin=False):
+        if not user in self:
             member = Member.objects.create(
                 user=user,
                 nickname=user.name,
@@ -89,6 +39,15 @@ class Room(models.Model):
                 is_admin=is_admin
             )
             member.save()
+            return member
+        else:
+            raise EOFError("accept_user")
+
+    def __contains__(self, user):
+        return Member.objects.filter(room=self,user=user).exists()
+
+    def get_member_instance_of_user(self,user):
+        return Member.objects.get(user=user,room=self)
 
     def str_start_date(self):
         return '{}년{}월{}일'.format(
@@ -111,13 +70,15 @@ nickname, index, is_admin과 같은 방에 따라 다른 정보를 보관함
 """
 class Member(models.Model):
     user = models.ForeignKey("accounts.User",default=None,on_delete=models.SET_NULL,blank=True,null=True,related_name="member_set")
-    room = models.ForeignKey(Room,on_delete=models.CASCADE,related_name="users")
-    index = models.IntegerField(default=0,validators=[MinValueValidator(0)])
+    room = models.ForeignKey(Room,on_delete=models.CASCADE,related_name="members")
     is_admin = models.BooleanField(default=False)
     nickname = models.CharField(default = 'nickname',max_length=30)
 
     def __str__(self):
         return '{}({})'.format(self.nickname,self.user.name)
+    def change_nickname(self,nickname):
+        self.nickname = nickname
+        self.save()
 
 """
 UserMatrixMapper
@@ -133,7 +94,9 @@ class UserMatrixMapper:
     def get_user_list_arranged_by_expendmoney(self, users,all_expense_entries):
         # 돈을 받을 자: 돈 쓴자
         # temp_tuple_dict = expense.receiver를 key로 하고, value를 총 쓴돈으로하는 dict
-        temp_tuple_dict = {user:0 for user in users}
+        temp_tuple_dict = {
+            user:0 for user in users
+        }
 
         # 돈을 가장 적게 사용한 순(본인이 본인한테 보내는 것 제외)을 user를 정렬하기
         # 1) 총 쓴 돈을 dict에 모두 저장한다.
@@ -154,6 +117,7 @@ class UserMatrixMapper:
     def get_initial_matrix(self):
         n = len(self.user_list_arranged_by_expendmoney)
         mat = [[0 for col in range(n)] for row in range(n)]
+
 
         for entry in self.all_expense_entries:
             sender_idx = self.map_to_matindex(entry.sender)
@@ -183,6 +147,7 @@ class UserMatrixMapper:
         print(b)
 
 
+
 """
 Matrix
 ======
@@ -191,11 +156,7 @@ Matrix
 class ExpenseMatrix(models.Model):
     room = models.OneToOneField(Room,related_name="matrix",on_delete=models.CASCADE)
     needed_to_clean_up = models.BooleanField(default=True)
-    """
-        cleanup
-        =======
-        :정산을 진행한다.
-    """
+
     def cleanup(self,room):
         if self.needed_to_clean_up:
             # 1) 모든 matrix를 초기화 한다.
@@ -208,7 +169,7 @@ class ExpenseMatrix(models.Model):
                 self.__set_expense(expense)
 
             # 3) entry - matrix mapper를 만든다.
-            users=Member.objects.filter(room=room).all()
+            users = Member.objects.filter(room=room).all()
             all_expense_entries = ExpenseMatrixEntry.objects.filter(matrix=self,is_cleaned_data=False).all()
             mapper = UserMatrixMapper(users,all_expense_entries)
             mat = mapper.get_initial_matrix()
@@ -245,6 +206,7 @@ class ExpenseMatrix(models.Model):
             matrix=self,
             receiver=user,
             is_cleaned_data=True,).exclude(sender=user).all()
+
     def get_self_expense(self,user):
         try:
             entry = ExpenseMatrixEntry.objects.get(
@@ -256,6 +218,7 @@ class ExpenseMatrix(models.Model):
             return entry.value
         except:
             return 0
+        
     def get_total_members_expense(self):
         all_entries = ExpenseMatrixEntry.objects.filter(matrix=self,is_cleaned_data=True).all()
         if len(all_entries) == 0:
@@ -369,7 +332,43 @@ class Expense(models.Model):
     def divided_cost(self):
         return self.cost//self.number_of_participants()
 
+class EnteringQAManager(models.Manager):
+    nouns = [
+        '요이','기린','사자','호랑이','거북이','치타','고구마','감자',
+    ]
+    adjectives =[
+        '잠자는','달리는','즐거운','행동하는','성난','배부른','예민한',
+    ]
+
+    def get_noun_noun_code(self):
+        first = random.randrange(0,len(self.nouns))
+        second = random.randrange(0,len(self.nouns))
+        if second==first:
+            if second==0:
+                second = second+1
+            else:
+                second = second-1
+        return (self.nouns[first],self.nouns[second])
+
+    def get_adjective_noun_code(self):
+        noun = random.randrange(0,len(self.nouns))
+        adjective = random.randrange(0,len(self.adjectives))
+        return (self.adjectives[adjective],self.nouns[noun])
+
+    def create(self,*args,**kwargs):
+        q,a = self.get_adjective_noun_code()
+        kwargs['Q']=q
+        kwargs['A']=a
+        return super(EnteringQAManager,self).create(*args,**kwargs)
+
+
+
 class EnteringQA(models.Model):
     Q = models.CharField(verbose_name="질문",max_length=10,default='요이')
     A = models.CharField(verbose_name="답변",max_length=10,default='탱구리')
-    room = models.OneToOneField(Room,on_delete=models.CASCADE)
+    room = models.OneToOneField(Room,on_delete=models.CASCADE,related_name='QA')
+
+    objects = EnteringQAManager()
+
+    def match_code(self,answer):
+        return answer == self.A

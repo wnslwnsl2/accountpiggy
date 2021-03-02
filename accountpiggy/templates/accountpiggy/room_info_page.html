@@ -30,10 +30,10 @@
 
 <h2>방참가자</h2>
 <div class="container-fluid member_list">
-    {% for user in users %}
+    {% for member in members %}
     <div class="row userInfo">
         <div class="col-1">
-            {% if user.is_admin %}
+            {% if member.is_admin %}
             <span class="material-icons">
                 star
             </span>
@@ -41,14 +41,14 @@
         </div>
 
         <div class="col-8">
-            {% if indexed_user.index == user.index %}
-                <span class="imUser">{{user.nickname}}({{ user.user.name }})</span>
+            {% if current_member.id == user.id %}
+                <span class="imUser">{{member.nickname}}({{ member.user.name }})</span>
             {% else %}
-                {{user.nickname}}({{ user.user.name }})
+                {{member.nickname}}({{ member.user.name }})
             {% endif %}
 
-            {% if user.user.is_dummy or indexed_user.index == user.index %}
-            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?index={{user.index}}" class="edit">
+            {% if member.user.is_dummy or current_member.id == member.id %}
+            <a href="{% url 'accountpiggy:room_member_edit' room.id %}?member_id={{member.id}}" class="edit">
                 <span class="material-icons">
                 mode
                 </span>
@@ -58,15 +58,15 @@
 
         <div class="col-3 text-right-please">
             {% if is_admin %}
-            {% if user.user.is_dummy %}
-            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
+            {% if member.user.is_dummy %}
+            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?member_id={{member.id}}"
                class="edit">
                 <span class="material-icons">
                     cancel
                 </span>
             </a>
             {% elif not user.is_admin %}
-            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?index={{user.index}}"
+            <a href="{% url 'accountpiggy:room_member_delete' room.id %}?member_id={{member.id}}"
                class="edit">
                 <span class="material-icons">
                     logout

@@ -1,4 +1,4 @@
-from .models import Room,Expense,Member
+from .models import Room,Expense,Member,ExpenseMatrix,EnteringQA
 from accounts.models import User
 from django import forms
 import datetime
@@ -15,7 +15,21 @@ class CleanedPageUserSelectForm(forms.Form):
         queryset=Member.objects.all(),
     )
 
-class RoomCreateForm(forms.ModelForm):
+class RoomSaveForm(forms.ModelForm):
+    def save_or_create(self,room_id):
+        if Room.objects.filter(id=room_id).exists():
+            room = Room.objects.get(id=room_id)
+            room.name = self.cleaned_data['name']
+            room.start_date = self.cleaned_data['start_date']
+            room.end_date = self.cleaned_data['end_date']
+            created = False
+        else:
+            room = self.save()
+            ExpenseMatrix.objects.create(room=room)
+            EnteringQA.objects.create(room=room)
+            created = True
+        return room,created
+
     class Meta:
         model = Room
         fields = ('name','start_date','end_date')

@@ -1,5 +1,5 @@
 from .decorators import membership_required
-from .forms import RoomCreateForm,ExpenseCreateForm,NameForm,CleanedPageUserSelectForm
+from .forms import RoomSaveForm,ExpenseCreateForm,NameForm
 from . import models
 from .models import Room,Expense,Member, ExpenseMatrix, ExpenseMatrixEntry
 from accounts.models import User
@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 def test(request):
     return render(request,'accountpiggy/test.html')
@@ -51,10 +52,14 @@ def room_create_page(request):
         room_id = -1
 
     if request.method == "POST":
-        form = RoomCreateForm(request.POST)
+        form = RoomSaveForm(request.POST)
 
         if form.is_valid():
-            room = Room.objects.save_or_create(form,request.user,room_id)
+            #1) 방을 만든다.
+            room,created = form.save_or_create(room_id)
+            #2) 방장을 넣는다.
+            room.accept_user(request.user,True)
+
             if ajax:
                 return ""
             else:
@@ -64,9 +69,9 @@ def room_create_page(request):
             return form.errors
     else:
         if ajax:
-            form = RoomCreateForm(instance=Room.objects.get(id=room_id))
+            form = RoomSaveForm(instance=Room.objects.get(id=room_id))
         else:
-            form = RoomCreateForm()
+            form = RoomSaveForm()
 
     context = {'form': form}
     return render(request, 'accountpiggy/room_create_page.html', context)
@@ -104,14 +109,13 @@ def room_reception_page(request,room_id):
     room = get_object_or_404(Room,id=room_id)
 
     # 사용자가 방에 있는지 확인하고 있으면, expenses_page로 이동할 수 있게 해줌
-    if Member.objects.filter(room=room, user=request.user).exists():
+    if request.user in room:
         return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
 
     if request.method == "POST":
-        if request.POST['codeword']==room.enteringqa.A:
-            # 사용자를 방에 연결시켜줌 (IndexedUser 만들기)
-            participantUser = Member.objects.create(user=request.user, room=room, index=room.get_next_index(),nickname= request.user.name,is_admin=False)
-            participantUser.save()
+        if room.QA.match_code(request.POST['codeword']):
+            # 방 입장
+            room.accept_user(request.user,False)
             return HttpResponseRedirect(reverse('accountpiggy:room_expenses_page',kwargs={'room_id':room_id}))
 
     context['room']=room
@@ -128,12 +132,8 @@ def room_reception_page(request,room_id):
 @login_required
 @membership_required
 def room_expenses_page(request,room_id):
-    """
-        TODO 추가하기 & 정산하기 한페이지에서 이뤄지도록
-    """
     context = {}
     room = get_object_or_404(Room, id=room_id)
-    context['room'] = room
     all_expense_list = Expense.objects.expenses_in_room(room=room).order_by('-datetime')
 
     if len(all_expense_list)!=0:
@@ -165,6 +165,7 @@ def room_expenses_page(request,room_id):
     else:
         context['expense_exist'] = False
 
+    context['room'] = room
     context['indexed_user'] = Member.objects.get(user=request.user, room=room)
 
     return render(request, 'accountpiggy/room_expenses_page.html', context)
@@ -343,18 +344,23 @@ def room_info_page(request,room_id):
     room = get_object_or_404(Room, id=room_id)
 
     if request.method == "POST" and 'adddummy' in request.POST:
-        dummy = User.dummy.all();
-        Member.objects.create(room=room, user=dummy,nickname="이름을설정해주세요" ,index=room.get_next_index(), is_admin=False)
+        dummy = User.dummy.all()
+        dummyMemeber = room.accept_user(dummy)
+        dummyMemeber.nickname = "이름을입력해주세요"
+        dummyMemeber.save()
 
-    indexed_user = Member.objects.get(user=request.user, room=room)
+    current_member = room.get_member_instance_of_user(request.user)
 
-    context['room'] = room
-    context['indexed_user'] = indexed_user
-    context['users'] = room.users.all().order_by('index')
-    context['is_admin'] = indexed_user.is_admin
-    qa = models.EnteringQA.objects.get(room=room)
-    context['roomQ']=qa.Q
-    context['roomA']=qa.A
+    qa = room.QA
+
+    context = {
+        'room': room,
+        'current_member':current_member,
+        'members':room.members.all(),
+        'is_admin': current_member.is_admin,
+        'roomQ':qa.Q,
+        'roomA':qa.A,
+    }
     return render(request, 'accountpiggy/room_info_page.html', context)
 
 """
@@ -370,30 +376,28 @@ def room_member_edit(request,room_id):
         TODO 처음 페이지 들어올 때 닉네임 설정도 동일한 method로 사용할 수 있도록
         TODO 닉네임 추천 알고리즘 구현 or 검색
     """
-    context ={}
     room = get_object_or_404(Room, id=room_id)
-    context['room'] = room
+
+    if 'member_id' in request.GET:
+        member_id = request.GET['member_id']
+    else:
+        member_id = -1
 
     if request.method == "POST":
-        index = request.POST['index']
         form = NameForm(request.POST)
 
         if form.is_valid():
-            indexed_user = Member.objects.get(room=room, index=index)
-            indexed_user.nickname = form.cleaned_data['name']
-            indexed_user.save()
+            member = Member.objects.get(id=member_id)
+            member.change_nickname(form.cleaned_data['name'])
             return HttpResponseRedirect(reverse('accountpiggy:room_info_page',kwargs={'room_id':room_id}))
-        else:
-            # 정보가 올바르지 않으면 get으로 디리렉션 시킴
-            return HttpResponseRedirect('{}?index={}'.format(reverse('accountpiggy:room_member_edit',kwargs={'room_id':room_id}),index))
     else:
         form = NameForm()
-        index = request.GET['index']
-        indexed_user = Member.objects.get(room=room, index=index)
-        form.name = indexed_user.nickname
 
-    context['index'] = index
-    context['form'] = form
+    context ={
+        'room':room,
+        'form':form,
+        'member_id':member_id
+    }
     return render(request,'accountpiggy/room_member_edit.html',context)
 
 """
@@ -411,10 +415,7 @@ def room_member_delete(request,room_id):
     context['room'] = room
 
     if request.method == "GET":
-        member = Member.objects.get(
-            room=room,
-            index=request.GET['index'],
-        )
+        member = Member.objects.get(id=request.GET['member_id'])
         if member.user.is_dummy():
             member.delete()
         else:

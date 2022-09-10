@@ -1,5 +1,5 @@
 import numpy as np
-from .participant import *
+import participant
 
 # TODO
 # 1. Makes init receive explicit parameters.

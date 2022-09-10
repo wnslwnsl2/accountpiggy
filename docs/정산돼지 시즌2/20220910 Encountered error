@@ -1,0 +1,8 @@
+Postgres got error
+- I reinstalled postgres
+
+After reinstalling, all tables seems to be removed.
+
+Auto data base setting functionallity is required.
+
+For now I will use library only to handling accounts things.

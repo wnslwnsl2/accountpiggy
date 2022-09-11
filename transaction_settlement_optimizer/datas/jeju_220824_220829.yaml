@@ -1,0 +1,16 @@
+Users: [현준,여의,영욱,예진,영준]
+Expenses:
+- {
+    "Users": [현준,여의,영욱,예진,영준],
+    "ExpendUser": "현준",
+    "Cost": 20000,
+    "Purpose": "횟집",
+    "DateTime": "2022-09-10 22:34"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 20000,
+    "Purpose": "횟집",
+    "DateTime": "2022-09-10 22:34"
+  }

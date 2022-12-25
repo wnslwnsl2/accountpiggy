@@ -120,7 +120,6 @@ class UserMatrixMapper:
         n = len(self.user_list_arranged_by_expendmoney)
         mat = [[0 for col in range(n)] for row in range(n)]
 
-
         for entry in self.all_expense_entries:
             sender_idx = self.map_to_matindex(entry.sender)
             receiver_idx = self.map_to_matindex(entry.receiver)

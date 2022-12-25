@@ -1,16 +1,275 @@
 Users: [현준,여의,영욱,예진,영준]
 Expenses:
 - {
+    "Users": [영욱,예진,영준],
+    "ExpendUser": "여의",
+    "Cost": 119400,
+    "Purpose": "비행기 값",
+    "DateTime": "2022.08.24 12:00"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "여의",
+    "Cost": 32500,
+    "Purpose": "CU 제주서해안로점",
+    "DateTime": "2022.08.24 23:27"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "영욱",
+    "Cost": 45000,
+    "Purpose": "베이글",
+    "DateTime": "2022.08.26 15:20"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "영욱",
+    "Cost": 170000,
+    "Purpose": "렌트비",
+    "DateTime": "2022.08.25 12:00"
+  }
+- {
+    "Users": [현준,여의,영욱,예진,영준],
+    "ExpendUser": "영준",
+    "Cost": 32000,
+    "Purpose": "판교 주차 범칙금",
+    "DateTime": "2022.08.24 15:20"
+  }
+- {
+    "Users": [현준,여의],
+    "ExpendUser": "현준",
+    "Cost": 78000,
+    "Purpose": "아시아나항공직판KRW온라인",
+    "DateTime": "2022.08.23 20:18"
+  }
+- {
     "Users": [현준,여의,영욱,예진,영준],
     "ExpendUser": "현준",
-    "Cost": 20000,
-    "Purpose": "횟집",
-    "DateTime": "2022-09-10 22:34"
+    "Cost": 14600,
+    "Purpose": "(주)비지에프리테일 김포공항국",
+    "DateTime": "2022.08.24 18:21"
+  }
+- {
+    "Users": [현준,여의,영욱,예진,영준],
+    "ExpendUser": "현준",
+    "Cost": 9500,
+    "Purpose": "택시 공항->용담",
+    "DateTime": "2022.08.24 20:49"
+  }
+- {
+    "Users": [현준,여의,영욱,예진,영준],
+    "ExpendUser": "현준",
+    "Cost": 85000,
+    "Purpose": "골든비치(민박)",
+    "DateTime": "2022.08.24 20:50"
+  }
+- {
+    "Users": [현준,여의,영욱,예진,영준],
+    "ExpendUser": "현준",
+    "Cost": 180000,
+    "Purpose": "용담 횟집-나홀로",
+    "DateTime": "2022.08.24 23:16"
   }
 - {
     "Users": [현준,여의,영욱,예진],
     "ExpendUser": "현준",
-    "Cost": 20000,
-    "Purpose": "횟집",
-    "DateTime": "2022-09-10 22:34"
+    "Cost": 7100,
+    "Purpose": "편의점 - 커피",
+    "DateTime": "2022.08.25 10:59"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 8000,
+    "Purpose": "녹원렌트카 조기출차비용",
+    "DateTime": "2022.08.25 11:50"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 45000,
+    "Purpose": "대춘해장국",
+    "DateTime": "2022.08.25 12:38"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 8400,
+    "Purpose": "컴포즈커피제주노형점",
+    "DateTime": "2022.08.25 13:31"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 38050,
+    "Purpose": "GS25 한림원광점",
+    "DateTime": "2022.08.25 16:40"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 148000,
+    "Purpose": "고향흑돼지",
+    "DateTime": "2022.08.25 21:01"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 8500,
+    "Purpose": "세븐일레븐 제주한림해안점",
+    "DateTime": "2022.08.25 21:09"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 16400,
+    "Purpose": "GS25 한림월광점",
+    "DateTime": "2022.08.26 11:43"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 36000,
+    "Purpose": "일억조",
+    "DateTime": "2022/08/26 13:19"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 5600,
+    "Purpose": "탐나쑥빵",
+    "DateTime": "2022/08/26 13:29"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 11000,
+    "Purpose": "세븐일레븐 제주용수해안로점",
+    "DateTime": "2022/08/26 14:11"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 72000,
+    "Purpose": "만인정",
+    "DateTime": "2022/08/26 18:41"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 40550,
+    "Purpose": "GS25 한림월광점",
+    "DateTime": "2022/08/26 19:15"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 3200,
+    "Purpose": "GS25 한림월광점",
+    "DateTime": "2022/08/26 19:16"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 441130,
+    "Purpose": "에어비엔비",
+    "DateTime": "2022/08/26 21:13"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 200000,
+    "Purpose": "남원 숙소 청소비",
+    "DateTime": "2022/08/26 21:13"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 55000,
+    "Purpose": "옛날순대",
+    "DateTime": "2022/08/27 14:02"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 5000,
+    "Purpose": "중문편의점",
+    "DateTime": "2022/08/27 15:21"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 120000,
+    "Purpose": "중문 서핑(코코넛)",
+    "DateTime": "2022/08/27 15:28"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 35000,
+    "Purpose": "서귀포충전소",
+    "DateTime": "2022/08/27 19:47"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 130000,
+    "Purpose": "청해수산회센터",
+    "DateTime": "2022/08/27 19:47"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 28900,
+    "Purpose": "CU 서귀태흥점",
+    "DateTime": "2022/08/27 19:59"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 30900,
+    "Purpose": "CU 서귀태흥점",
+    "DateTime": "2022/08/28 00:06"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 62000,
+    "Purpose": "향토음식도두항식당",
+    "DateTime": "2022/08/28 10:57"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "현준",
+    "Cost": 71000,
+    "Purpose": "범바위식당-닭도리탕",
+    "DateTime": "2022/10/03 10:00"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "영욱",
+    "Cost": 228000,
+    "Purpose": "육회미가",
+    "DateTime": "2022/11/27 22:43"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "영욱",
+    "Cost": 99000,
+    "Purpose": "유동골뱅이",
+    "DateTime": "2022/12/17 18:53"
+  }
+- {
+    "Users": [현준,여의,영욱,예진],
+    "ExpendUser": "영욱",
+    "Cost": 46000,
+    "Purpose": "산적",
+    "DateTime": "2022/12/17 20:36"
+  }
+- {
+    "Users": [현준],
+    "ExpendUser": "영욱",
+    "Cost": 100000,
+    "Purpose": "미리 보냄",
+    "DateTime": "2022/12/20 12:00"
   }
